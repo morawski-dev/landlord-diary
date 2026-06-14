@@ -402,15 +402,78 @@
   }
   .toast::before { content:"●"; color: var(--gold-deep); margin-right: 9px; font-size: 10px; vertical-align: middle; }
   .toast.show { transform: translateX(-50%) translateY(0); }
+
+  /* ---------- auth gate (login) ---------- */
+  body.locked > header.masthead,
+  body.locked > nav.index,
+  body.locked > main.wrap { display: none; }
+  .auth-gate { display: none; }
+  body.locked .auth-gate {
+    display: flex; position: fixed; inset: 0; z-index: 100;
+    align-items: center; justify-content: center; padding: 24px;
+    background: radial-gradient(120% 80% at 50% -10%, rgba(216,166,61,.10), transparent 60%), var(--bg);
+  }
+  .auth-card {
+    width: 100%; max-width: 420px; background: var(--panel);
+    border: 1px solid var(--line-2); border-radius: 4px;
+    box-shadow: var(--shadow); padding: 38px 34px 30px; position: relative;
+  }
+  .auth-card::before {
+    content: ''; position: absolute; left: 0; top: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, var(--gold-deep), var(--gold), var(--gold-deep));
+  }
+  .auth-folio { font-family: var(--mono); font-size: 10.5px; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-faint); margin-bottom: 18px; }
+  .auth-folio b { color: var(--gold); font-weight: 600; }
+  .auth-title { font-weight: 400; font-size: 26px; line-height: 1.05; color: var(--ink); letter-spacing: .01em; }
+  .auth-title .dot { color: var(--gold); margin: 0 .12em; }
+  .auth-sub { color: var(--ink-soft); font-size: 13.5px; margin: 8px 0 22px; }
+  .auth-l { display: block; font-family: var(--mono); font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-faint); margin: 0 0 6px; }
+  .auth-in {
+    width: 100%; background: var(--bg-2); border: 1px solid var(--line-2); border-radius: 3px;
+    color: var(--ink); font-family: var(--sans); font-size: 14px; padding: 11px 12px; margin-bottom: 16px;
+    outline: none; transition: border-color .15s, box-shadow .15s;
+  }
+  .auth-in:focus { border-color: var(--gold-deep); box-shadow: 0 0 0 3px var(--gold-glow); }
+  .auth-msg { min-height: 18px; font-size: 12.5px; color: var(--amber); margin-bottom: 12px; line-height: 1.45; }
+  .auth-actions { display: flex; gap: 10px; }
+  .auth-actions .btn { flex: 1; justify-content: center; }
+  .auth-foot { font-size: 11.5px; color: var(--ink-faint); margin-top: 16px; line-height: 1.5; }
+  .mast-top-right { display: flex; align-items: center; gap: 14px; }
+  .signout {
+    font-family: var(--mono); font-size: 10px; letter-spacing: .1em; text-transform: uppercase;
+    color: var(--ink-faint); background: none; border: 1px solid var(--line-2); border-radius: 3px;
+    padding: 4px 9px; cursor: pointer; transition: color .15s, border-color .15s;
+  }
+  .signout:hover { color: var(--gold); border-color: var(--gold-deep); }
 </style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
-<body>
+<body class="locked">
+
+<div class="auth-gate" id="authGate">
+  <div class="auth-card">
+    <div class="auth-folio">Dziennik Wynajmującego &nbsp;·&nbsp; <b>Dostęp prywatny</b></div>
+    <h2 class="auth-title">Kawalerka<span class="dot">/</span>al.&nbsp;Jana&nbsp;Pawła&nbsp;II</h2>
+    <p class="auth-sub">Zaloguj się, aby zobaczyć i edytować dane najmu.</p>
+    <label class="auth-l" for="au-email">E-mail</label>
+    <input id="au-email" class="auth-in" type="email" autocomplete="username" placeholder="ty@przyklad.pl">
+    <label class="auth-l" for="au-pass">Hasło</label>
+    <input id="au-pass" class="auth-in" type="password" autocomplete="current-password" placeholder="••••••••"
+           onkeydown="if(event.key==='Enter')doAuth('signin')">
+    <div class="auth-msg" id="au-msg"></div>
+    <div class="auth-actions">
+      <button class="btn brass" onclick="doAuth('signin')">Zaloguj się</button>
+      <button class="btn" onclick="doAuth('signup')">Załóż konto</button>
+    </div>
+    <p class="auth-foot">Pierwszy raz? Kliknij „Załóż konto", potwierdź rejestrację mailem, a potem zaloguj się.</p>
+  </div>
+</div>
 
 <header class="masthead">
   <div class="wrap">
     <div class="mast-top">
       <div class="folio">Dziennik Wynajmującego &nbsp;·&nbsp; <b>№ 01</b></div>
-      <div>Stan na 12.06.2026</div>
+      <div class="mast-top-right"><span>Stan na 12.06.2026</span><button class="signout" onclick="signOut()">Wyloguj</button></div>
     </div>
     <div class="mast-main">
       <div class="mast-title">
@@ -567,27 +630,37 @@ const TODAY = new Date('2026-06-12');
 const fmtPL = d => new Date(d).toLocaleDateString('pl-PL', { day:'numeric', month:'short', year:'numeric' });
 const daysBetween = (a,b) => Math.round((new Date(b)-new Date(a))/864e5);
 
-/* ---------- persistence (window.storage with localStorage + in-memory fallback) ---------- */
-const SK = { tasks:'rent_tasks_v2', issues:'rent_issues_v2' };
-const _mem = {};
-const store = {
-  async get(key) {
-    if (window.storage && window.storage.get) { try { return await window.storage.get(key); } catch {} }
-    try { const v = localStorage.getItem(key); return v == null ? null : { value:v }; } catch {}
-    return key in _mem ? { value:_mem[key] } : null;
-  },
-  async set(key, val) {
-    if (window.storage && window.storage.set) { try { return await window.storage.set(key, val); } catch {} }
-    try { localStorage.setItem(key, val); return; } catch {}
-    _mem[key] = val;
-  }
-};
-async function load(key, def) {
-  try { const r = await store.get(key); return r ? JSON.parse(r.value) : def; }
-  catch { return def; }
+/* ---------- backend (Supabase: Auth + Postgres + RLS) ---------- */
+const SUPA_URL = 'https://kjvihylbtyzcvtfjtfhq.supabase.co';
+const SUPA_KEY = 'sb_publishable_bEOfzfAdpSRKtIYlSzfbHg_gbq6eyAj';
+const sb = (window.supabase && window.supabase.createClient)
+  ? window.supabase.createClient(SUPA_URL, SUPA_KEY)
+  : null;
+
+/* row <-> app-object mapping (DB column `descr` <-> app field `desc`) */
+const rowToTask  = r => ({ id:r.id, title:r.title, desc:r.descr||'', cat:r.cat, date:r.date, done:r.done });
+const rowToIssue = r => ({ id:r.id, title:r.title, desc:r.descr||'', pri:r.pri, status:r.status, created:r.created, log:r.log||[] });
+
+async function fetchTasks() {
+  const { data, error } = await sb.from('ld_tasks').select('*').order('id');
+  if (error) { console.error(error); toast('Błąd wczytywania zadań'); return []; }
+  return data.map(rowToTask);
 }
-async function save(key, val) {
-  try { await store.set(key, JSON.stringify(val)); } catch(e){ console.error(e); }
+async function fetchIssues() {
+  const { data, error } = await sb.from('ld_issues').select('*').order('id');
+  if (error) { console.error(error); toast('Błąd wczytywania zgłoszeń'); return []; }
+  return data.map(rowToIssue);
+}
+/* one-time seed of starter data when the account is empty */
+async function seedIfEmpty() {
+  const { count:tc } = await sb.from('ld_tasks').select('id', { count:'exact', head:true });
+  if (tc === 0) {
+    await sb.from('ld_tasks').insert(seedTasks().map(t=>({ title:t.title, descr:t.desc, cat:t.cat, date:t.date, done:t.done })));
+  }
+  const { count:ic } = await sb.from('ld_issues').select('id', { count:'exact', head:true });
+  if (ic === 0) {
+    await sb.from('ld_issues').insert(seedIssues().map(i=>({ title:i.title, descr:i.desc, pri:i.pri, status:i.status, created:i.created, log:i.log })));
+  }
 }
 
 /* ---------- seed data ---------- */
@@ -773,8 +846,10 @@ function renderTasks() {
 }
 async function toggleTask(id){
   const t=tasks.find(x=>x.id===id); if(!t)return;
-  t.done=!t.done;
-  await save(SK.tasks,tasks);
+  const next=!t.done;
+  const { error } = await sb.from('ld_tasks').update({ done:next }).eq('id', id);
+  if(error){ console.error(error); toast('Nie udało się zapisać zmiany'); return; }
+  t.done=next;
   renderTasks(); renderHealth(); renderTabs(); renderAlerts();
   if(t.done) toast('Odhaczone — wróci w kolejnym cyklu');
 }
@@ -782,9 +857,11 @@ function openTaskModal(){ document.getElementById('tm-date').value='2026-12-01';
 async function saveTask(){
   const title=document.getElementById('tm-title').value.trim();
   if(!title){toast('Podaj nazwę zadania');return;}
-  tasks.push({ id:Date.now(), title, desc:document.getElementById('tm-desc').value.trim(),
-    cat:document.getElementById('tm-cat').value, date:document.getElementById('tm-date').value||'2026-12-01', done:false });
-  await save(SK.tasks,tasks);
+  const row={ title, descr:document.getElementById('tm-desc').value.trim(),
+    cat:document.getElementById('tm-cat').value, date:document.getElementById('tm-date').value||'2026-12-01', done:false };
+  const { data, error } = await sb.from('ld_tasks').insert(row).select().single();
+  if(error){ console.error(error); toast('Nie udało się dodać zadania'); return; }
+  tasks.push(rowToTask(data));
   closeModal('taskModal');
   ['tm-title','tm-desc'].forEach(i=>document.getElementById(i).value='');
   renderTasks(); renderHealth(); renderAlerts(); renderTabs(); toast('Zadanie dodane');
@@ -833,28 +910,39 @@ function renderIssues(){
 }
 async function advanceIssue(id){
   const i=issues.find(x=>x.id===id); if(!i||i.status>=3)return;
-  i.status++;
-  i.log.push({when:'2026-06-12', txt:`Status zmieniony na: ${STATUS_STEPS[i.status]}`});
-  await save(SK.issues,issues); renderIssues(); renderHealth(); renderTabs(); renderAlerts(); toast('Status zaktualizowany');
+  const status=i.status+1;
+  const log=[...i.log, {when:'2026-06-12', txt:`Status zmieniony na: ${STATUS_STEPS[status]}`}];
+  const { error } = await sb.from('ld_issues').update({ status, log }).eq('id', id);
+  if(error){ console.error(error); toast('Nie udało się zapisać statusu'); return; }
+  i.status=status; i.log=log;
+  renderIssues(); renderHealth(); renderTabs(); renderAlerts(); toast('Status zaktualizowany');
 }
 async function closeIssue(id){
   const i=issues.find(x=>x.id===id); if(!i)return;
-  i.status=3; i.log.push({when:'2026-06-12', txt:'Zgłoszenie zamknięte i rozliczone'});
-  await save(SK.issues,issues); renderIssues(); renderHealth(); renderTabs(); renderAlerts(); toast('Zgłoszenie zamknięte');
+  const log=[...i.log, {when:'2026-06-12', txt:'Zgłoszenie zamknięte i rozliczone'}];
+  const { error } = await sb.from('ld_issues').update({ status:3, log }).eq('id', id);
+  if(error){ console.error(error); toast('Nie udało się zamknąć zgłoszenia'); return; }
+  i.status=3; i.log=log;
+  renderIssues(); renderHealth(); renderTabs(); renderAlerts(); toast('Zgłoszenie zamknięte');
 }
 async function reopenIssue(id){
   const i=issues.find(x=>x.id===id); if(!i)return;
-  i.status=2; i.log.push({when:'2026-06-12', txt:'Otwarte ponownie'});
-  await save(SK.issues,issues); renderIssues(); renderHealth(); renderTabs(); renderAlerts();
+  const log=[...i.log, {when:'2026-06-12', txt:'Otwarte ponownie'}];
+  const { error } = await sb.from('ld_issues').update({ status:2, log }).eq('id', id);
+  if(error){ console.error(error); toast('Nie udało się zapisać'); return; }
+  i.status=2; i.log=log;
+  renderIssues(); renderHealth(); renderTabs(); renderAlerts();
 }
 function openIssueModal(){ document.getElementById('issueModal').classList.add('open'); }
 async function saveIssue(){
   const title=document.getElementById('im-title').value.trim();
   if(!title){toast('Podaj czego dotyczy zgłoszenie');return;}
-  issues.push({ id:Math.floor(Math.random()*900+100), title, desc:document.getElementById('im-desc').value.trim()||'(brak szczegółów)',
+  const row={ title, descr:document.getElementById('im-desc').value.trim()||'(brak szczegółów)',
     pri:document.getElementById('im-pri').value, status:0, created:'2026-06-12',
-    log:[{when:'2026-06-12', txt:'Zgłoszone — zarejestrowane przez wynajmującego'}] });
-  await save(SK.issues,issues);
+    log:[{when:'2026-06-12', txt:'Zgłoszone — zarejestrowane przez wynajmującego'}] };
+  const { data, error } = await sb.from('ld_issues').insert(row).select().single();
+  if(error){ console.error(error); toast('Nie udało się zarejestrować zgłoszenia'); return; }
+  issues.push(rowToIssue(data));
   closeModal('issueModal');
   ['im-title','im-desc'].forEach(i=>document.getElementById(i).value='');
   renderIssues(); renderHealth(); renderTabs(); renderAlerts(); toast('Zgłoszenie zarejestrowane');
@@ -901,16 +989,45 @@ function toast(msg){
 document.querySelectorAll('.modal-bg').forEach(m=>m.addEventListener('click',e=>{ if(e.target===m) m.classList.remove('open'); }));
 document.addEventListener('keydown',e=>{ if(e.key==='Escape') document.querySelectorAll('.modal-bg.open').forEach(m=>m.classList.remove('open')); });
 
-/* ---------- init ---------- */
-(async function(){
-  tasks = await load(SK.tasks, null) || seedTasks();
-  issues = await load(SK.issues, null) || seedIssues();
-  if(!(await load(SK.tasks,null))) await save(SK.tasks,tasks);
-  if(!(await load(SK.issues,null))) await save(SK.issues,issues);
+/* ---------- auth + init ---------- */
+async function loadAndRender(){
+  await seedIfEmpty();
+  tasks  = await fetchTasks();
+  issues = await fetchIssues();
   renderTabs(); renderHealth(); renderDashboard();
   renderTaskFilters(); renderTasks();
   renderIssueFilters(); renderIssues();
   renderAlerts();
+}
+async function enterApp(){
+  document.body.classList.remove('locked');
+  await loadAndRender();
+}
+async function doAuth(mode){
+  const msg=document.getElementById('au-msg');
+  if(!sb){ msg.textContent='Nie udało się załadować biblioteki Supabase (sprawdź połączenie).'; return; }
+  const email=document.getElementById('au-email').value.trim();
+  const pass=document.getElementById('au-pass').value;
+  if(!email||!pass){ msg.textContent='Podaj e-mail i hasło.'; return; }
+  msg.textContent='Łączę…';
+  const res = mode==='signup'
+    ? await sb.auth.signUp({ email, password:pass })
+    : await sb.auth.signInWithPassword({ email, password:pass });
+  if(res.error){ msg.textContent=res.error.message; return; }
+  if(mode==='signup' && !res.data.session){
+    msg.textContent='Konto utworzone. Sprawdź skrzynkę i potwierdź rejestrację, a potem zaloguj się.'; return;
+  }
+  msg.textContent='';
+  enterApp();
+}
+async function signOut(){
+  if(sb) await sb.auth.signOut();
+  location.reload();
+}
+(async function(){
+  if(!sb){ document.getElementById('au-msg').textContent='Nie udało się załadować biblioteki Supabase (sprawdź połączenie).'; return; }
+  const { data:{ session } } = await sb.auth.getSession();
+  if(session) enterApp();
 })();
 </script>
 </body>
