@@ -1,452 +1,452 @@
 <!DOCTYPE html>
 <html lang="pl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dziennik Wynajmującego — al. Jana Pawła II</title>
-<style>
-  @import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Hanken+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dziennik Wynajmującego — al. Jana Pawła II</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Hanken+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
-  :root {
-    --bg:        #141310;
-    --bg-2:      #1a1814;
-    --panel:     #1e1c16;
-    --panel-2:   #25231b;
-    --panel-hi:  #2c2a1f;
-    --line:      rgba(234,224,199,.09);
-    --line-2:    rgba(234,224,199,.16);
-    --ink:       #efe9da;
-    --ink-soft:  #b1a994;
-    --ink-faint: #786f5d;
-    --gold:      #d8a63d;
-    --gold-deep: #b9852a;
-    --gold-glow: rgba(216,166,61,.16);
-    --sage:      #93b186;   /* positive / money kept */
-    --teal:      #629a9c;   /* info / secondary */
-    --plum:      #c0a3dd;   /* legal */
-    --clay:      #d27355;   /* critical */
-    --amber:     #e0a64e;   /* warning */
-    --shadow:    0 2px 6px rgba(0,0,0,.35), 0 22px 60px rgba(0,0,0,.42);
-    --serif:     'Instrument Serif', Georgia, serif;
-    --sans:      'Hanken Grotesk', system-ui, sans-serif;
-    --mono:      'JetBrains Mono', ui-monospace, monospace;
-  }
+    :root {
+      --bg:        #141310;
+      --bg-2:      #1a1814;
+      --panel:     #1e1c16;
+      --panel-2:   #25231b;
+      --panel-hi:  #2c2a1f;
+      --line:      rgba(234,224,199,.09);
+      --line-2:    rgba(234,224,199,.16);
+      --ink:       #efe9da;
+      --ink-soft:  #b1a994;
+      --ink-faint: #786f5d;
+      --gold:      #d8a63d;
+      --gold-deep: #b9852a;
+      --gold-glow: rgba(216,166,61,.16);
+      --sage:      #93b186;   /* positive / money kept */
+      --teal:      #629a9c;   /* info / secondary */
+      --plum:      #c0a3dd;   /* legal */
+      --clay:      #d27355;   /* critical */
+      --amber:     #e0a64e;   /* warning */
+      --shadow:    0 2px 6px rgba(0,0,0,.35), 0 22px 60px rgba(0,0,0,.42);
+      --serif:     'Instrument Serif', Georgia, serif;
+      --sans:      'Hanken Grotesk', system-ui, sans-serif;
+      --mono:      'JetBrains Mono', ui-monospace, monospace;
+    }
 
-  * { box-sizing: border-box; margin: 0; padding: 0; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
 
-  html { scroll-behavior: smooth; }
-  body {
-    font-family: var(--sans);
-    background: var(--bg);
-    color: var(--ink);
-    line-height: 1.5;
-    -webkit-font-smoothing: antialiased;
-    min-height: 100vh;
-    position: relative;
-  }
-  ::selection { background: var(--gold); color: #1a160c; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--sans);
+      background: var(--bg);
+      color: var(--ink);
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+      position: relative;
+    }
+    ::selection { background: var(--gold); color: #1a160c; }
 
-  /* grain overlay */
-  body::before {
-    content: ""; position: fixed; inset: 0; z-index: 1; pointer-events: none; opacity: .5;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.035'/%3E%3C/svg%3E");
-    mix-blend-mode: overlay;
-  }
+    /* grain overlay */
+    body::before {
+      content: ""; position: fixed; inset: 0; z-index: 1; pointer-events: none; opacity: .5;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.035'/%3E%3C/svg%3E");
+      mix-blend-mode: overlay;
+    }
 
-  .mono { font-family: var(--mono); font-feature-settings: "tnum" 1; }
-  .wrap { max-width: 1200px; margin: 0 auto; padding: 0 30px; }
-  @media (max-width: 640px) { .wrap { padding: 0 18px; } }
+    .mono { font-family: var(--mono); font-feature-settings: "tnum" 1; }
+    .wrap { max-width: 1200px; margin: 0 auto; padding: 0 30px; }
+    @media (max-width: 640px) { .wrap { padding: 0 18px; } }
 
-  /* ---------- Masthead ---------- */
-  header.masthead {
-    position: relative; overflow: hidden;
-    background:
-      radial-gradient(120% 140% at 78% -20%, rgba(216,166,61,.10), transparent 55%),
-      linear-gradient(180deg, #16140f 0%, #19170f 100%);
-    border-bottom: 1px solid var(--line-2);
-    padding: 30px 0 0;
-  }
-  header.masthead::after {
-    content: ""; position: absolute; inset: 0; pointer-events: none; opacity: .5;
-    background-image:
-      linear-gradient(var(--line) 1px, transparent 1px),
-      linear-gradient(90deg, var(--line) 1px, transparent 1px);
-    background-size: 34px 34px;
-    -webkit-mask-image: radial-gradient(120% 110% at 50% -10%, #000 35%, transparent 72%);
-            mask-image: radial-gradient(120% 110% at 50% -10%, #000 35%, transparent 72%);
-  }
-  header .wrap { position: relative; z-index: 2; }
+    /* ---------- Masthead ---------- */
+    header.masthead {
+      position: relative; overflow: hidden;
+      background:
+              radial-gradient(120% 140% at 78% -20%, rgba(216,166,61,.10), transparent 55%),
+              linear-gradient(180deg, #16140f 0%, #19170f 100%);
+      border-bottom: 1px solid var(--line-2);
+      padding: 30px 0 0;
+    }
+    header.masthead::after {
+      content: ""; position: absolute; inset: 0; pointer-events: none; opacity: .5;
+      background-image:
+              linear-gradient(var(--line) 1px, transparent 1px),
+              linear-gradient(90deg, var(--line) 1px, transparent 1px);
+      background-size: 34px 34px;
+      -webkit-mask-image: radial-gradient(120% 110% at 50% -10%, #000 35%, transparent 72%);
+      mask-image: radial-gradient(120% 110% at 50% -10%, #000 35%, transparent 72%);
+    }
+    header .wrap { position: relative; z-index: 2; }
 
-  .mast-top {
-    display: flex; justify-content: space-between; align-items: center;
-    font-family: var(--mono); font-size: 11px; letter-spacing: .14em; text-transform: uppercase;
-    color: var(--ink-faint); padding-bottom: 22px;
-    border-bottom: 1px solid var(--line);
-  }
-  .mast-top .folio { color: var(--gold); }
-  .mast-top .folio b { color: var(--ink-soft); font-weight: 500; }
+    .mast-top {
+      display: flex; justify-content: space-between; align-items: center;
+      font-family: var(--mono); font-size: 11px; letter-spacing: .14em; text-transform: uppercase;
+      color: var(--ink-faint); padding-bottom: 22px;
+      border-bottom: 1px solid var(--line);
+    }
+    .mast-top .folio { color: var(--gold); }
+    .mast-top .folio b { color: var(--ink-soft); font-weight: 500; }
 
-  .mast-main {
-    display: flex; justify-content: space-between; align-items: flex-end; gap: 36px;
-    padding: 26px 0 28px; flex-wrap: wrap;
-  }
-  .mast-title h1 {
-    font-weight: 400;
-    font-size: clamp(34px, 5.4vw, 60px); line-height: .98; letter-spacing: -.01em;
-    color: var(--ink);
-  }
-  .mast-title h1 .dot { color: var(--gold); font-style: italic; padding: 0 .12em; }
-  .mast-sub {
-    margin-top: 12px; font-size: 13.5px; color: var(--ink-soft); max-width: 540px;
-    letter-spacing: .005em;
-  }
-  .mast-meta {
-    min-width: 250px; border: 1px solid var(--line-2); border-radius: 3px;
-    background: linear-gradient(180deg, rgba(255,255,255,.018), transparent);
-  }
-  .mm-row {
-    display: flex; justify-content: space-between; gap: 16px; align-items: baseline;
-    padding: 10px 16px; border-bottom: 1px solid var(--line);
-    font-size: 12.5px; color: var(--ink-soft);
-  }
-  .mm-row:last-child { border-bottom: none; }
-  .mm-row b { font-family: var(--mono); font-weight: 500; color: var(--ink); font-size: 12.5px; letter-spacing: -.01em; }
-  .mm-row .accent { color: var(--gold); }
+    .mast-main {
+      display: flex; justify-content: space-between; align-items: flex-end; gap: 36px;
+      padding: 26px 0 28px; flex-wrap: wrap;
+    }
+    .mast-title h1 {
+      font-weight: 400;
+      font-size: clamp(34px, 5.4vw, 60px); line-height: .98; letter-spacing: -.01em;
+      color: var(--ink);
+    }
+    .mast-title h1 .dot { color: var(--gold); font-style: italic; padding: 0 .12em; }
+    .mast-sub {
+      margin-top: 12px; font-size: 13.5px; color: var(--ink-soft); max-width: 540px;
+      letter-spacing: .005em;
+    }
+    .mast-meta {
+      min-width: 250px; border: 1px solid var(--line-2); border-radius: 3px;
+      background: linear-gradient(180deg, rgba(255,255,255,.018), transparent);
+    }
+    .mm-row {
+      display: flex; justify-content: space-between; gap: 16px; align-items: baseline;
+      padding: 10px 16px; border-bottom: 1px solid var(--line);
+      font-size: 12.5px; color: var(--ink-soft);
+    }
+    .mm-row:last-child { border-bottom: none; }
+    .mm-row b { font-family: var(--mono); font-weight: 500; color: var(--ink); font-size: 12.5px; letter-spacing: -.01em; }
+    .mm-row .accent { color: var(--gold); }
 
-  /* health strip */
-  .health-strip {
-    display: grid; grid-template-columns: repeat(5, 1fr);
-    border-top: 1px solid var(--line-2);
-  }
-  @media (max-width: 760px) { .health-strip { grid-template-columns: 1fr 1fr; } }
-  @media (max-width: 420px) { .health-strip { grid-template-columns: 1fr; } }
-  .hs {
-    padding: 16px 20px 18px; border-right: 1px solid var(--line);
-    position: relative;
-  }
-  .hs:last-child { border-right: none; }
-  .hs-k {
-    font-family: var(--mono); font-size: 10px; letter-spacing: .12em; text-transform: uppercase;
-    color: var(--ink-faint); margin-bottom: 7px;
-  }
-  .hs-v { font-size: 30px; line-height: 1; color: var(--ink); }
-  .hs-v span { font-family: var(--sans); font-size: 12.5px; color: var(--ink-faint); }
-  .hs-t { font-size: 11px; margin-top: 6px; letter-spacing: .01em; }
-  .up   { color: var(--sage); }
-  .down { color: var(--clay); }
-  .flat { color: var(--ink-faint); }
-  .up::before   { content:"↑ "; }
-  .down::before { content:"↓ "; }
+    /* health strip */
+    .health-strip {
+      display: grid; grid-template-columns: repeat(5, 1fr);
+      border-top: 1px solid var(--line-2);
+    }
+    @media (max-width: 760px) { .health-strip { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 420px) { .health-strip { grid-template-columns: 1fr; } }
+    .hs {
+      padding: 16px 20px 18px; border-right: 1px solid var(--line);
+      position: relative;
+    }
+    .hs:last-child { border-right: none; }
+    .hs-k {
+      font-family: var(--mono); font-size: 10px; letter-spacing: .12em; text-transform: uppercase;
+      color: var(--ink-faint); margin-bottom: 7px;
+    }
+    .hs-v { font-size: 30px; line-height: 1; color: var(--ink); }
+    .hs-v span { font-family: var(--sans); font-size: 12.5px; color: var(--ink-faint); }
+    .hs-t { font-size: 11px; margin-top: 6px; letter-spacing: .01em; }
+    .up   { color: var(--sage); }
+    .down { color: var(--clay); }
+    .flat { color: var(--ink-faint); }
+    .up::before   { content:"↑ "; }
+    .down::before { content:"↓ "; }
 
-  /* ---------- Index / tabs ---------- */
-  nav.index {
-    position: sticky; top: 0; z-index: 30;
-    background: rgba(20,19,15,.86); backdrop-filter: blur(12px) saturate(1.1);
-    border-bottom: 1px solid var(--line-2);
-  }
-  .index-wrap { max-width: 1200px; margin: 0 auto; padding: 0 22px; display: flex; gap: 4px; overflow-x: auto; }
-  .index-wrap::-webkit-scrollbar { height: 0; }
-  .tab {
-    background: none; border: none; cursor: pointer; padding: 16px 18px 13px;
-    font-family: var(--sans); font-size: 13.5px; font-weight: 500; color: var(--ink-soft);
-    white-space: nowrap; transition: color .18s; position: relative;
-    display: flex; align-items: center; gap: 9px;
-  }
-  .tab .tab-no { font-family: var(--mono); font-size: 10.5px; color: var(--ink-faint); transition: color .18s; }
-  .tab::after {
-    content: ""; position: absolute; left: 14px; right: 14px; bottom: -1px; height: 2px;
-    background: var(--gold); transform: scaleX(0); transform-origin: left; transition: transform .25s cubic-bezier(.4,0,.2,1);
-  }
-  .tab:hover { color: var(--ink); }
-  .tab:hover .tab-no { color: var(--gold-deep); }
-  .tab.active { color: var(--ink); }
-  .tab.active .tab-no { color: var(--gold); }
-  .tab.active::after { transform: scaleX(1); }
-  .badge {
-    background: var(--clay); color: #1a120e; font-family: var(--mono); font-size: 10px; font-weight: 600;
-    min-width: 18px; height: 18px; border-radius: 9px; display: inline-flex; align-items: center; justify-content: center; padding: 0 5px;
-  }
+    /* ---------- Index / tabs ---------- */
+    nav.index {
+      position: sticky; top: 0; z-index: 30;
+      background: rgba(20,19,15,.86); backdrop-filter: blur(12px) saturate(1.1);
+      border-bottom: 1px solid var(--line-2);
+    }
+    .index-wrap { max-width: 1200px; margin: 0 auto; padding: 0 22px; display: flex; gap: 4px; overflow-x: auto; }
+    .index-wrap::-webkit-scrollbar { height: 0; }
+    .tab {
+      background: none; border: none; cursor: pointer; padding: 16px 18px 13px;
+      font-family: var(--sans); font-size: 13.5px; font-weight: 500; color: var(--ink-soft);
+      white-space: nowrap; transition: color .18s; position: relative;
+      display: flex; align-items: center; gap: 9px;
+    }
+    .tab .tab-no { font-family: var(--mono); font-size: 10.5px; color: var(--ink-faint); transition: color .18s; }
+    .tab::after {
+      content: ""; position: absolute; left: 14px; right: 14px; bottom: -1px; height: 2px;
+      background: var(--gold); transform: scaleX(0); transform-origin: left; transition: transform .25s cubic-bezier(.4,0,.2,1);
+    }
+    .tab:hover { color: var(--ink); }
+    .tab:hover .tab-no { color: var(--gold-deep); }
+    .tab.active { color: var(--ink); }
+    .tab.active .tab-no { color: var(--gold); }
+    .tab.active::after { transform: scaleX(1); }
+    .badge {
+      background: var(--clay); color: #1a120e; font-family: var(--mono); font-size: 10px; font-weight: 600;
+      min-width: 18px; height: 18px; border-radius: 9px; display: inline-flex; align-items: center; justify-content: center; padding: 0 5px;
+    }
 
-  /* ---------- Layout ---------- */
-  main { position: relative; z-index: 2; }
-  .view { display: none; padding: 40px 0 100px; }
-  .view.active { display: block; }
-  .view.active .reveal { animation: rise .6s cubic-bezier(.2,.7,.2,1) both; }
-  .reveal:nth-child(1){ animation-delay: .02s; }
-  .reveal:nth-child(2){ animation-delay: .09s; }
-  .reveal:nth-child(3){ animation-delay: .16s; }
-  .reveal:nth-child(4){ animation-delay: .23s; }
-  .reveal:nth-child(5){ animation-delay: .30s; }
-  @keyframes rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
-  @media (prefers-reduced-motion: reduce) { .view.active .reveal { animation: none; } }
+    /* ---------- Layout ---------- */
+    main { position: relative; z-index: 2; }
+    .view { display: none; padding: 40px 0 100px; }
+    .view.active { display: block; }
+    .view.active .reveal { animation: rise .6s cubic-bezier(.2,.7,.2,1) both; }
+    .reveal:nth-child(1){ animation-delay: .02s; }
+    .reveal:nth-child(2){ animation-delay: .09s; }
+    .reveal:nth-child(3){ animation-delay: .16s; }
+    .reveal:nth-child(4){ animation-delay: .23s; }
+    .reveal:nth-child(5){ animation-delay: .30s; }
+    @keyframes rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+    @media (prefers-reduced-motion: reduce) { .view.active .reveal { animation: none; } }
 
-  .sec-head { margin-bottom: 30px; display: flex; justify-content: space-between; align-items: flex-end; gap: 18px; flex-wrap: wrap; }
-  .sec-head .eyebrow {
-    font-family: var(--mono); font-size: 11px; letter-spacing: .18em; text-transform: uppercase;
-    color: var(--gold); margin-bottom: 12px;
-  }
-  .sec-head h2 { font-weight: 400; font-size: clamp(28px,3.6vw,40px); line-height: 1; letter-spacing: -.01em; }
-  .sec-head .lede { color: var(--ink-soft); font-size: 14px; max-width: 580px; margin-top: 11px; }
+    .sec-head { margin-bottom: 30px; display: flex; justify-content: space-between; align-items: flex-end; gap: 18px; flex-wrap: wrap; }
+    .sec-head .eyebrow {
+      font-family: var(--mono); font-size: 11px; letter-spacing: .18em; text-transform: uppercase;
+      color: var(--gold); margin-bottom: 12px;
+    }
+    .sec-head h2 { font-weight: 400; font-size: clamp(28px,3.6vw,40px); line-height: 1; letter-spacing: -.01em; }
+    .sec-head .lede { color: var(--ink-soft); font-size: 14px; max-width: 580px; margin-top: 11px; }
 
-  .panel {
-    background: linear-gradient(180deg, var(--panel) 0%, var(--bg-2) 100%);
-    border: 1px solid var(--line-2); border-radius: 4px; box-shadow: var(--shadow);
-  }
-  .panel-h {
-    font-family: var(--mono); font-size: 11px; letter-spacing: .14em; text-transform: uppercase;
-    color: var(--ink-faint); padding: 18px 24px; border-bottom: 1px solid var(--line);
-    display: flex; align-items: center; gap: 10px;
-  }
-  .panel-h::before { content:""; width: 5px; height: 5px; background: var(--gold); border-radius: 50%; box-shadow: 0 0 0 3px var(--gold-glow); }
+    .panel {
+      background: linear-gradient(180deg, var(--panel) 0%, var(--bg-2) 100%);
+      border: 1px solid var(--line-2); border-radius: 4px; box-shadow: var(--shadow);
+    }
+    .panel-h {
+      font-family: var(--mono); font-size: 11px; letter-spacing: .14em; text-transform: uppercase;
+      color: var(--ink-faint); padding: 18px 24px; border-bottom: 1px solid var(--line);
+      display: flex; align-items: center; gap: 10px;
+    }
+    .panel-h::before { content:""; width: 5px; height: 5px; background: var(--gold); border-radius: 50%; box-shadow: 0 0 0 3px var(--gold-glow); }
 
-  /* ---------- KPI band ---------- */
-  .kpis {
-    display: grid; grid-template-columns: repeat(4,1fr);
-    border: 1px solid var(--line-2); border-radius: 4px; overflow: hidden; margin-bottom: 26px;
-    background: linear-gradient(180deg, var(--panel), var(--bg-2));
-  }
-  @media (max-width: 760px) { .kpis { grid-template-columns: 1fr 1fr; } }
-  .kpi { padding: 22px 24px; border-right: 1px solid var(--line); position: relative; }
-  .kpi:nth-child(4) { border-right: none; }
-  @media (max-width: 760px) { .kpi:nth-child(2) { border-right: none; } .kpi:nth-child(1),.kpi:nth-child(2){ border-bottom: 1px solid var(--line); } }
-  .kpi-k { font-family: var(--mono); font-size: 10.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-faint); margin-bottom: 14px; }
-  .kpi-v { font-size: 38px; line-height: .9; color: var(--ink); }
-  .kpi-v span { font-family: var(--sans); font-size: 13px; color: var(--ink-faint); margin-left: 2px; }
-  .kpi-f { font-size: 12px; color: var(--ink-soft); margin-top: 11px; }
+    /* ---------- KPI band ---------- */
+    .kpis {
+      display: grid; grid-template-columns: repeat(4,1fr);
+      border: 1px solid var(--line-2); border-radius: 4px; overflow: hidden; margin-bottom: 26px;
+      background: linear-gradient(180deg, var(--panel), var(--bg-2));
+    }
+    @media (max-width: 760px) { .kpis { grid-template-columns: 1fr 1fr; } }
+    .kpi { padding: 22px 24px; border-right: 1px solid var(--line); position: relative; }
+    .kpi:nth-child(4) { border-right: none; }
+    @media (max-width: 760px) { .kpi:nth-child(2) { border-right: none; } .kpi:nth-child(1),.kpi:nth-child(2){ border-bottom: 1px solid var(--line); } }
+    .kpi-k { font-family: var(--mono); font-size: 10.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-faint); margin-bottom: 14px; }
+    .kpi-v { font-size: 38px; line-height: .9; color: var(--ink); }
+    .kpi-v span { font-family: var(--sans); font-size: 13px; color: var(--ink-faint); margin-left: 2px; }
+    .kpi-f { font-size: 12px; color: var(--ink-soft); margin-top: 11px; }
 
-  .split  { display: grid; grid-template-columns: 1.32fr 1fr; gap: 22px; }
-  .split2 { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; margin-top: 22px; }
-  @media (max-width: 880px) { .split, .split2 { grid-template-columns: 1fr; } }
+    .split  { display: grid; grid-template-columns: 1.32fr 1fr; gap: 22px; }
+    .split2 { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; margin-top: 22px; }
+    @media (max-width: 880px) { .split, .split2 { grid-template-columns: 1fr; } }
 
-  /* waterfall */
-  .wf { padding: 22px 24px 24px; display: flex; flex-direction: column; gap: 12px; }
-  .wf-row { display: grid; grid-template-columns: 150px 1fr 84px; align-items: center; gap: 16px; }
-  .wf-k { font-size: 13px; color: var(--ink-soft); }
-  .wf-track { height: 28px; background: rgba(255,255,255,.025); border: 1px solid var(--line); border-radius: 3px; overflow: hidden; }
-  .wf-fill { height: 100%; border-radius: 2px; transform-origin: left; animation: grow .8s cubic-bezier(.2,.7,.2,1) both; }
-  @keyframes grow { from { transform: scaleX(0); } to { transform: scaleX(1); } }
-  .wf-amt { font-family: var(--mono); font-size: 13px; text-align: right; color: var(--ink); letter-spacing: -.02em; }
-  .wf-rule { height: 1px; background: var(--line); margin: 5px 0; border-top: 1px dashed var(--line-2); }
-  .wf-row.big .wf-k { font-weight: 600; color: var(--ink); font-size: 13.5px; }
-  .wf-row.big .wf-amt { font-weight: 600; font-size: 15px; color: var(--sage); }
-  .wf-row.neg .wf-amt { color: var(--ink-faint); }
+    /* waterfall */
+    .wf { padding: 22px 24px 24px; display: flex; flex-direction: column; gap: 12px; }
+    .wf-row { display: grid; grid-template-columns: 150px 1fr 84px; align-items: center; gap: 16px; }
+    .wf-k { font-size: 13px; color: var(--ink-soft); }
+    .wf-track { height: 28px; background: rgba(255,255,255,.025); border: 1px solid var(--line); border-radius: 3px; overflow: hidden; }
+    .wf-fill { height: 100%; border-radius: 2px; transform-origin: left; animation: grow .8s cubic-bezier(.2,.7,.2,1) both; }
+    @keyframes grow { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+    .wf-amt { font-family: var(--mono); font-size: 13px; text-align: right; color: var(--ink); letter-spacing: -.02em; }
+    .wf-rule { height: 1px; background: var(--line); margin: 5px 0; border-top: 1px dashed var(--line-2); }
+    .wf-row.big .wf-k { font-weight: 600; color: var(--ink); font-size: 13.5px; }
+    .wf-row.big .wf-amt { font-weight: 600; font-size: 15px; color: var(--sage); }
+    .wf-row.neg .wf-amt { color: var(--ink-faint); }
 
-  /* benchmark */
-  .bench { padding: 24px; }
-  .gauge { text-align: center; padding: 8px 0 6px; }
-  .gauge-v { font-size: 52px; line-height: 1; }
-  .gauge-v .pct { font-size: 24px; color: var(--clay); }
-  .gauge-v .unit { font-size: 22px; color: var(--ink-faint); }
-  .gauge-sub { font-size: 12.5px; color: var(--ink-soft); margin-top: 9px; }
-  .range { position: relative; height: 52px; margin: 30px 6px 10px; }
-  .range-track { position: absolute; top: 22px; left: 0; right: 0; height: 6px; border-radius: 3px;
-    background: linear-gradient(90deg, var(--sage) 0%, var(--amber) 55%, var(--clay) 100%); opacity: .8; }
-  .tick { position: absolute; top: 12px; width: 2px; height: 26px; background: var(--ink-soft); }
-  .tick::after { content: attr(data-label); position: absolute; top: -19px; left: 50%; transform: translateX(-50%);
-    font-family: var(--mono); font-size: 9.5px; letter-spacing: .04em; white-space: nowrap; color: var(--ink-soft); }
-  .tick.you { background: var(--gold); width: 3px; height: 34px; top: 8px; box-shadow: 0 0 12px var(--gold-glow); }
-  .tick.you::after { color: var(--gold); top: 36px; font-weight: 600; }
-  .range-labels { display: flex; justify-content: space-between; font-family: var(--mono); font-size: 10.5px; color: var(--ink-faint); margin-top: 6px; }
-  .insight {
-    margin-top: 20px; padding: 15px 17px; border: 1px solid var(--line-2); border-left: 2px solid var(--gold);
-    border-radius: 3px; font-size: 13px; line-height: 1.6; color: var(--ink-soft);
-    background: linear-gradient(180deg, rgba(216,166,61,.05), transparent);
-  }
-  .insight strong { color: var(--gold); font-weight: 600; }
+    /* benchmark */
+    .bench { padding: 24px; }
+    .gauge { text-align: center; padding: 8px 0 6px; }
+    .gauge-v { font-size: 52px; line-height: 1; }
+    .gauge-v .pct { font-size: 24px; color: var(--clay); }
+    .gauge-v .unit { font-size: 22px; color: var(--ink-faint); }
+    .gauge-sub { font-size: 12.5px; color: var(--ink-soft); margin-top: 9px; }
+    .range { position: relative; height: 52px; margin: 30px 6px 10px; }
+    .range-track { position: absolute; top: 22px; left: 0; right: 0; height: 6px; border-radius: 3px;
+      background: linear-gradient(90deg, var(--sage) 0%, var(--amber) 55%, var(--clay) 100%); opacity: .8; }
+    .tick { position: absolute; top: 12px; width: 2px; height: 26px; background: var(--ink-soft); }
+    .tick::after { content: attr(data-label); position: absolute; top: -19px; left: 50%; transform: translateX(-50%);
+      font-family: var(--mono); font-size: 9.5px; letter-spacing: .04em; white-space: nowrap; color: var(--ink-soft); }
+    .tick.you { background: var(--gold); width: 3px; height: 34px; top: 8px; box-shadow: 0 0 12px var(--gold-glow); }
+    .tick.you::after { color: var(--gold); top: 36px; font-weight: 600; }
+    .range-labels { display: flex; justify-content: space-between; font-family: var(--mono); font-size: 10.5px; color: var(--ink-faint); margin-top: 6px; }
+    .insight {
+      margin-top: 20px; padding: 15px 17px; border: 1px solid var(--line-2); border-left: 2px solid var(--gold);
+      border-radius: 3px; font-size: 13px; line-height: 1.6; color: var(--ink-soft);
+      background: linear-gradient(180deg, rgba(216,166,61,.05), transparent);
+    }
+    .insight strong { color: var(--gold); font-weight: 600; }
 
-  /* value chart + yield */
-  .vchart { padding: 24px; }
-  .vchart .big { display: flex; align-items: baseline; gap: 14px; margin: 6px 0 4px; flex-wrap: wrap; }
-  .vchart .big .num { font-size: 44px; line-height: 1; }
-  .vchart .big .delta { font-family: var(--mono); font-size: 13px; color: var(--sage); }
-  .vchart .cap { font-size: 12.5px; color: var(--ink-soft); }
-  svg.spark { width: 100%; height: 156px; display: block; margin-top: 14px; }
-  .yield { padding: 24px; display: flex; flex-direction: column; gap: 16px; }
-  .y-row { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; }
-  .y-row .k { font-size: 13px; color: var(--ink-soft); }
-  .y-row .v { font-family: var(--mono); font-size: 17px; font-weight: 500; color: var(--ink); letter-spacing: -.02em; }
-  .y-row.hl .k { color: var(--sage); font-weight: 600; }
-  .y-row.hl .v { color: var(--sage); }
-  .y-note { font-size: 12.5px; color: var(--ink-soft); line-height: 1.6; }
-  .y-note strong { color: var(--ink); }
-  .hr { height: 1px; background: var(--line-2); border-top: 1px dashed var(--line-2); }
+    /* value chart + yield */
+    .vchart { padding: 24px; }
+    .vchart .big { display: flex; align-items: baseline; gap: 14px; margin: 6px 0 4px; flex-wrap: wrap; }
+    .vchart .big .num { font-size: 44px; line-height: 1; }
+    .vchart .big .delta { font-family: var(--mono); font-size: 13px; color: var(--sage); }
+    .vchart .cap { font-size: 12.5px; color: var(--ink-soft); }
+    svg.spark { width: 100%; height: 156px; display: block; margin-top: 14px; }
+    .yield { padding: 24px; display: flex; flex-direction: column; gap: 16px; }
+    .y-row { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; }
+    .y-row .k { font-size: 13px; color: var(--ink-soft); }
+    .y-row .v { font-family: var(--mono); font-size: 17px; font-weight: 500; color: var(--ink); letter-spacing: -.02em; }
+    .y-row.hl .k { color: var(--sage); font-weight: 600; }
+    .y-row.hl .v { color: var(--sage); }
+    .y-note { font-size: 12.5px; color: var(--ink-soft); line-height: 1.6; }
+    .y-note strong { color: var(--ink); }
+    .hr { height: 1px; background: var(--line-2); border-top: 1px dashed var(--line-2); }
 
-  .footnote {
-    margin-top: 26px; font-size: 12px; color: var(--ink-faint); line-height: 1.7;
-    padding: 18px 22px; border: 1px solid var(--line); border-radius: 4px; background: rgba(255,255,255,.012);
-  }
-  .footnote strong { color: var(--ink-soft); }
+    .footnote {
+      margin-top: 26px; font-size: 12px; color: var(--ink-faint); line-height: 1.7;
+      padding: 18px 22px; border: 1px solid var(--line); border-radius: 4px; background: rgba(255,255,255,.012);
+    }
+    .footnote strong { color: var(--ink-soft); }
 
-  /* ---------- Filters ---------- */
-  .filters { display: flex; gap: 8px; margin-bottom: 22px; flex-wrap: wrap; }
-  .filt {
-    background: transparent; border: 1px solid var(--line-2); border-radius: 2px; padding: 7px 15px;
-    font-family: var(--mono); font-size: 11.5px; letter-spacing: .03em; cursor: pointer; color: var(--ink-soft); transition: .15s;
-  }
-  .filt:hover { border-color: var(--gold-deep); color: var(--ink); }
-  .filt.active { background: var(--gold); color: #1a140a; border-color: var(--gold); font-weight: 600; }
+    /* ---------- Filters ---------- */
+    .filters { display: flex; gap: 8px; margin-bottom: 22px; flex-wrap: wrap; }
+    .filt {
+      background: transparent; border: 1px solid var(--line-2); border-radius: 2px; padding: 7px 15px;
+      font-family: var(--mono); font-size: 11.5px; letter-spacing: .03em; cursor: pointer; color: var(--ink-soft); transition: .15s;
+    }
+    .filt:hover { border-color: var(--gold-deep); color: var(--ink); }
+    .filt.active { background: var(--gold); color: #1a140a; border-color: var(--gold); font-weight: 600; }
 
-  /* ---------- Tasks ---------- */
-  .task-list { overflow: hidden; }
-  .task {
-    display: grid; grid-template-columns: auto 1fr auto; gap: 16px; align-items: start;
-    padding: 18px 22px; border-bottom: 1px solid var(--line); cursor: pointer; transition: background .14s;
-    position: relative;
-  }
-  .task::before { content:""; position: absolute; left: 0; top: 0; bottom: 0; width: 2px; background: transparent; transition: background .15s; }
-  .task:hover { background: rgba(255,255,255,.02); }
-  .task:hover::before { background: var(--gold); }
-  .task:last-child { border-bottom: none; }
-  .task.done { opacity: .5; }
-  .task.done .task-title { text-decoration: line-through; text-decoration-color: var(--ink-faint); }
-  .check {
-    width: 22px; height: 22px; border: 1.5px solid var(--line-2); border-radius: 4px; margin-top: 1px;
-    display: flex; align-items: center; justify-content: center; transition: .18s; flex-shrink: 0;
-  }
-  .task:hover .check { border-color: var(--gold-deep); }
-  .task.done .check { background: var(--sage); border-color: var(--sage); }
-  .check svg { width: 13px; height: 13px; stroke: #16140f; opacity: 0; transition: opacity .15s; }
-  .task.done .check svg { opacity: 1; }
-  .task-title { font-size: 15px; font-weight: 600; letter-spacing: -.005em; }
-  .task-desc { font-size: 13px; color: var(--ink-soft); margin-top: 4px; line-height: 1.5; }
-  .task-meta { display: flex; gap: 8px; align-items: center; margin-top: 10px; flex-wrap: wrap; }
-  .task-date { font-family: var(--mono); font-size: 11.5px; color: var(--ink-faint); text-align: right; min-width: 96px; letter-spacing: -.02em; }
+    /* ---------- Tasks ---------- */
+    .task-list { overflow: hidden; }
+    .task {
+      display: grid; grid-template-columns: auto 1fr auto; gap: 16px; align-items: start;
+      padding: 18px 22px; border-bottom: 1px solid var(--line); cursor: pointer; transition: background .14s;
+      position: relative;
+    }
+    .task::before { content:""; position: absolute; left: 0; top: 0; bottom: 0; width: 2px; background: transparent; transition: background .15s; }
+    .task:hover { background: rgba(255,255,255,.02); }
+    .task:hover::before { background: var(--gold); }
+    .task:last-child { border-bottom: none; }
+    .task.done { opacity: .5; }
+    .task.done .task-title { text-decoration: line-through; text-decoration-color: var(--ink-faint); }
+    .check {
+      width: 22px; height: 22px; border: 1.5px solid var(--line-2); border-radius: 4px; margin-top: 1px;
+      display: flex; align-items: center; justify-content: center; transition: .18s; flex-shrink: 0;
+    }
+    .task:hover .check { border-color: var(--gold-deep); }
+    .task.done .check { background: var(--sage); border-color: var(--sage); }
+    .check svg { width: 13px; height: 13px; stroke: #16140f; opacity: 0; transition: opacity .15s; }
+    .task.done .check svg { opacity: 1; }
+    .task-title { font-size: 15px; font-weight: 600; letter-spacing: -.005em; }
+    .task-desc { font-size: 13px; color: var(--ink-soft); margin-top: 4px; line-height: 1.5; }
+    .task-meta { display: flex; gap: 8px; align-items: center; margin-top: 10px; flex-wrap: wrap; }
+    .task-date { font-family: var(--mono); font-size: 11.5px; color: var(--ink-faint); text-align: right; min-width: 96px; letter-spacing: -.02em; }
 
-  .pill { font-family: var(--mono); font-size: 10.5px; letter-spacing: .03em; padding: 3px 9px; border-radius: 2px; font-weight: 500; white-space: nowrap; }
-  .pill.cat,
-  .pill.ok        { background: rgba(255,255,255,.05); color: var(--ink-soft); }
-  .pill.tech      { background: rgba(98,154,156,.14);  color: #8fc5c7; }
-  .pill.legal     { background: rgba(192,163,221,.14); color: #cdb3e6; }
-  .pill.fin       { background: rgba(147,177,134,.15); color: #b1cf9f; }
-  .pill.due-soon  { background: rgba(224,166,78,.15);  color: #ecbc6a; }
-  .pill.overdue   { background: rgba(210,115,85,.16);  color: #e89b80; }
+    .pill { font-family: var(--mono); font-size: 10.5px; letter-spacing: .03em; padding: 3px 9px; border-radius: 2px; font-weight: 500; white-space: nowrap; }
+    .pill.cat,
+    .pill.ok        { background: rgba(255,255,255,.05); color: var(--ink-soft); }
+    .pill.tech      { background: rgba(98,154,156,.14);  color: #8fc5c7; }
+    .pill.legal     { background: rgba(192,163,221,.14); color: #cdb3e6; }
+    .pill.fin       { background: rgba(147,177,134,.15); color: #b1cf9f; }
+    .pill.due-soon  { background: rgba(224,166,78,.15);  color: #ecbc6a; }
+    .pill.overdue   { background: rgba(210,115,85,.16);  color: #e89b80; }
 
-  /* ---------- Issues ---------- */
-  .issue { padding: 22px 24px; margin-bottom: 16px; }
-  .issue-head { display: flex; justify-content: space-between; gap: 14px; align-items: flex-start; }
-  .issue-title { font-size: 16px; font-weight: 600; letter-spacing: -.01em; }
-  .issue-num { font-family: var(--mono); font-size: 11px; color: var(--ink-faint); margin-top: 4px; letter-spacing: .01em; }
-  .issue-desc { font-size: 13.5px; color: var(--ink-soft); margin: 12px 0 18px; line-height: 1.55; }
-  .status-track { display: flex; margin: 18px 0 6px; }
-  .st-step { flex: 1; text-align: center; position: relative; }
-  .st-line { position: absolute; top: 6px; right: 50%; width: 100%; height: 2px; background: var(--line-2); z-index: 1; }
-  .st-step.done .st-line { background: var(--sage); }
-  .st-dot { width: 13px; height: 13px; border-radius: 50%; background: var(--panel-hi); border: 1.5px solid var(--line-2); margin: 0 auto 9px; position: relative; z-index: 2; }
-  .st-step.done .st-dot { background: var(--sage); border-color: var(--sage); }
-  .st-step.active .st-dot { background: var(--gold); border-color: var(--gold); box-shadow: 0 0 0 4px var(--gold-glow); }
-  .st-label { font-family: var(--mono); font-size: 10px; letter-spacing: .04em; color: var(--ink-faint); }
-  .st-step.active .st-label, .st-step.done .st-label { color: var(--ink-soft); }
-  .st-step.active .st-label { color: var(--gold); }
-  .log { margin-top: 16px; padding: 14px 16px; background: rgba(0,0,0,.18); border: 1px solid var(--line); border-radius: 3px; }
-  .log-row { font-size: 12.5px; color: var(--ink-soft); margin-bottom: 5px; line-height: 1.5; }
-  .log-row:last-child { margin-bottom: 0; }
-  .log-row .when { font-family: var(--mono); color: var(--gold-deep); font-size: 11.5px; }
-  .issue-foot { display: flex; justify-content: space-between; align-items: center; margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--line); flex-wrap: wrap; gap: 12px; }
-  .issue-foot .stat { font-size: 12.5px; color: var(--ink-soft); }
-  .issue-actions { display: flex; gap: 8px; }
+    /* ---------- Issues ---------- */
+    .issue { padding: 22px 24px; margin-bottom: 16px; }
+    .issue-head { display: flex; justify-content: space-between; gap: 14px; align-items: flex-start; }
+    .issue-title { font-size: 16px; font-weight: 600; letter-spacing: -.01em; }
+    .issue-num { font-family: var(--mono); font-size: 11px; color: var(--ink-faint); margin-top: 4px; letter-spacing: .01em; }
+    .issue-desc { font-size: 13.5px; color: var(--ink-soft); margin: 12px 0 18px; line-height: 1.55; }
+    .status-track { display: flex; margin: 18px 0 6px; }
+    .st-step { flex: 1; text-align: center; position: relative; }
+    .st-line { position: absolute; top: 6px; right: 50%; width: 100%; height: 2px; background: var(--line-2); z-index: 1; }
+    .st-step.done .st-line { background: var(--sage); }
+    .st-dot { width: 13px; height: 13px; border-radius: 50%; background: var(--panel-hi); border: 1.5px solid var(--line-2); margin: 0 auto 9px; position: relative; z-index: 2; }
+    .st-step.done .st-dot { background: var(--sage); border-color: var(--sage); }
+    .st-step.active .st-dot { background: var(--gold); border-color: var(--gold); box-shadow: 0 0 0 4px var(--gold-glow); }
+    .st-label { font-family: var(--mono); font-size: 10px; letter-spacing: .04em; color: var(--ink-faint); }
+    .st-step.active .st-label, .st-step.done .st-label { color: var(--ink-soft); }
+    .st-step.active .st-label { color: var(--gold); }
+    .log { margin-top: 16px; padding: 14px 16px; background: rgba(0,0,0,.18); border: 1px solid var(--line); border-radius: 3px; }
+    .log-row { font-size: 12.5px; color: var(--ink-soft); margin-bottom: 5px; line-height: 1.5; }
+    .log-row:last-child { margin-bottom: 0; }
+    .log-row .when { font-family: var(--mono); color: var(--gold-deep); font-size: 11.5px; }
+    .issue-foot { display: flex; justify-content: space-between; align-items: center; margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--line); flex-wrap: wrap; gap: 12px; }
+    .issue-foot .stat { font-size: 12.5px; color: var(--ink-soft); }
+    .issue-actions { display: flex; gap: 8px; }
 
-  /* ---------- Buttons / inputs ---------- */
-  .btn {
-    font-family: var(--sans); font-size: 12.5px; font-weight: 600; padding: 8px 16px; border-radius: 3px;
-    border: 1px solid var(--line-2); background: rgba(255,255,255,.02); color: var(--ink); cursor: pointer; transition: .15s; letter-spacing: .01em;
-  }
-  .btn:hover { border-color: var(--ink-soft); background: rgba(255,255,255,.05); }
-  .btn.primary { background: var(--ink); color: #16140f; border-color: var(--ink); }
-  .btn.primary:hover { background: #fff; border-color: #fff; }
-  .btn.brass { background: var(--gold); color: #1a140a; border-color: var(--gold); }
-  .btn.brass:hover { background: var(--gold-deep); border-color: var(--gold-deep); }
-  .btn.sm { padding: 6px 12px; font-size: 11.5px; }
+    /* ---------- Buttons / inputs ---------- */
+    .btn {
+      font-family: var(--sans); font-size: 12.5px; font-weight: 600; padding: 8px 16px; border-radius: 3px;
+      border: 1px solid var(--line-2); background: rgba(255,255,255,.02); color: var(--ink); cursor: pointer; transition: .15s; letter-spacing: .01em;
+    }
+    .btn:hover { border-color: var(--ink-soft); background: rgba(255,255,255,.05); }
+    .btn.primary { background: var(--ink); color: #16140f; border-color: var(--ink); }
+    .btn.primary:hover { background: #fff; border-color: #fff; }
+    .btn.brass { background: var(--gold); color: #1a140a; border-color: var(--gold); }
+    .btn.brass:hover { background: var(--gold-deep); border-color: var(--gold-deep); }
+    .btn.sm { padding: 6px 12px; font-size: 11.5px; }
 
-  input, textarea, select {
-    font-family: var(--sans); font-size: 13.5px; padding: 10px 13px; border: 1px solid var(--line-2);
-    border-radius: 3px; background: rgba(0,0,0,.2); color: var(--ink); width: 100%;
-  }
-  textarea { resize: vertical; }
-  input::placeholder, textarea::placeholder { color: var(--ink-faint); }
-  input:focus, textarea:focus, select:focus { outline: none; border-color: var(--gold); box-shadow: 0 0 0 3px var(--gold-glow); }
-  select { appearance: none; cursor: pointer; }
+    input, textarea, select {
+      font-family: var(--sans); font-size: 13.5px; padding: 10px 13px; border: 1px solid var(--line-2);
+      border-radius: 3px; background: rgba(0,0,0,.2); color: var(--ink); width: 100%;
+    }
+    textarea { resize: vertical; }
+    input::placeholder, textarea::placeholder { color: var(--ink-faint); }
+    input:focus, textarea:focus, select:focus { outline: none; border-color: var(--gold); box-shadow: 0 0 0 3px var(--gold-glow); }
+    select { appearance: none; cursor: pointer; }
 
-  /* ---------- Alerts ---------- */
-  .alert {
-    display: grid; grid-template-columns: auto 1fr auto; gap: 16px; align-items: start;
-    padding: 18px 22px; border-bottom: 1px solid var(--line);
-  }
-  .alert:last-child { border-bottom: none; }
-  .alert-ic { width: 38px; height: 38px; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 17px; flex-shrink: 0; }
-  .ai-crit { background: rgba(210,115,85,.16); }
-  .ai-warn { background: rgba(224,166,78,.15); }
-  .ai-info { background: rgba(98,154,156,.15); }
-  .ai-ok   { background: rgba(147,177,134,.15); }
-  .alert-t { font-size: 14px; font-weight: 600; letter-spacing: -.005em; }
-  .alert-s { font-size: 12.5px; color: var(--ink-soft); margin-top: 3px; line-height: 1.5; }
-  .alert-w { font-family: var(--mono); font-size: 11px; color: var(--ink-faint); white-space: nowrap; }
+    /* ---------- Alerts ---------- */
+    .alert {
+      display: grid; grid-template-columns: auto 1fr auto; gap: 16px; align-items: start;
+      padding: 18px 22px; border-bottom: 1px solid var(--line);
+    }
+    .alert:last-child { border-bottom: none; }
+    .alert-ic { width: 38px; height: 38px; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 17px; flex-shrink: 0; }
+    .ai-crit { background: rgba(210,115,85,.16); }
+    .ai-warn { background: rgba(224,166,78,.15); }
+    .ai-info { background: rgba(98,154,156,.15); }
+    .ai-ok   { background: rgba(147,177,134,.15); }
+    .alert-t { font-size: 14px; font-weight: 600; letter-spacing: -.005em; }
+    .alert-s { font-size: 12.5px; color: var(--ink-soft); margin-top: 3px; line-height: 1.5; }
+    .alert-w { font-family: var(--mono); font-size: 11px; color: var(--ink-faint); white-space: nowrap; }
 
-  .empty { text-align: center; padding: 56px 20px; color: var(--ink-faint); font-size: 13.5px; }
-  .empty svg { width: 38px; height: 38px; stroke: var(--line-2); margin-bottom: 14px; }
+    .empty { text-align: center; padding: 56px 20px; color: var(--ink-faint); font-size: 13.5px; }
+    .empty svg { width: 38px; height: 38px; stroke: var(--line-2); margin-bottom: 14px; }
 
-  /* ---------- Modal / toast ---------- */
-  .modal-bg { position: fixed; inset: 0; background: rgba(10,9,6,.66); backdrop-filter: blur(4px); z-index: 100; display: none; align-items: center; justify-content: center; padding: 20px; }
-  .modal-bg.open { display: flex; }
-  .modal { background: var(--panel); border: 1px solid var(--line-2); border-radius: 5px; max-width: 480px; width: 100%; padding: 28px; box-shadow: 0 30px 80px rgba(0,0,0,.6); animation: pop .22s cubic-bezier(.2,.7,.2,1); }
-  @keyframes pop { from { transform: scale(.96) translateY(8px); opacity: 0; } to { transform: none; opacity: 1; } }
-  .modal h3 { font-size: 26px; font-weight: 400; margin-bottom: 6px; }
-  .modal .m-eyebrow { font-family: var(--mono); font-size: 10.5px; letter-spacing: .16em; text-transform: uppercase; color: var(--gold); margin-bottom: 18px; }
-  .field { margin-bottom: 15px; }
-  .field label { font-family: var(--mono); font-size: 11px; letter-spacing: .05em; text-transform: uppercase; color: var(--ink-faint); display: block; margin-bottom: 7px; }
-  .modal-foot { display: flex; gap: 10px; justify-content: flex-end; margin-top: 24px; }
+    /* ---------- Modal / toast ---------- */
+    .modal-bg { position: fixed; inset: 0; background: rgba(10,9,6,.66); backdrop-filter: blur(4px); z-index: 100; display: none; align-items: center; justify-content: center; padding: 20px; }
+    .modal-bg.open { display: flex; }
+    .modal { background: var(--panel); border: 1px solid var(--line-2); border-radius: 5px; max-width: 480px; width: 100%; padding: 28px; box-shadow: 0 30px 80px rgba(0,0,0,.6); animation: pop .22s cubic-bezier(.2,.7,.2,1); }
+    @keyframes pop { from { transform: scale(.96) translateY(8px); opacity: 0; } to { transform: none; opacity: 1; } }
+    .modal h3 { font-size: 26px; font-weight: 400; margin-bottom: 6px; }
+    .modal .m-eyebrow { font-family: var(--mono); font-size: 10.5px; letter-spacing: .16em; text-transform: uppercase; color: var(--gold); margin-bottom: 18px; }
+    .field { margin-bottom: 15px; }
+    .field label { font-family: var(--mono); font-size: 11px; letter-spacing: .05em; text-transform: uppercase; color: var(--ink-faint); display: block; margin-bottom: 7px; }
+    .modal-foot { display: flex; gap: 10px; justify-content: flex-end; margin-top: 24px; }
 
-  .toast {
-    position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(90px);
-    background: var(--ink); color: #16140f; padding: 13px 24px; border-radius: 3px; font-size: 13.5px; font-weight: 600;
-    box-shadow: 0 12px 40px rgba(0,0,0,.5); z-index: 200; transition: transform .35s cubic-bezier(.2,.8,.3,1); letter-spacing: .01em;
-  }
-  .toast::before { content:"●"; color: var(--gold-deep); margin-right: 9px; font-size: 10px; vertical-align: middle; }
-  .toast.show { transform: translateX(-50%) translateY(0); }
+    .toast {
+      position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(90px);
+      background: var(--ink); color: #16140f; padding: 13px 24px; border-radius: 3px; font-size: 13.5px; font-weight: 600;
+      box-shadow: 0 12px 40px rgba(0,0,0,.5); z-index: 200; transition: transform .35s cubic-bezier(.2,.8,.3,1); letter-spacing: .01em;
+    }
+    .toast::before { content:"●"; color: var(--gold-deep); margin-right: 9px; font-size: 10px; vertical-align: middle; }
+    .toast.show { transform: translateX(-50%) translateY(0); }
 
-  /* ---------- auth gate (login) ---------- */
-  body.locked > header.masthead,
-  body.locked > nav.index,
-  body.locked > main.wrap { display: none; }
-  .auth-gate { display: none; }
-  body.locked .auth-gate {
-    display: flex; position: fixed; inset: 0; z-index: 100;
-    align-items: center; justify-content: center; padding: 24px;
-    background: radial-gradient(120% 80% at 50% -10%, rgba(216,166,61,.10), transparent 60%), var(--bg);
-  }
-  .auth-card {
-    width: 100%; max-width: 420px; background: var(--panel);
-    border: 1px solid var(--line-2); border-radius: 4px;
-    box-shadow: var(--shadow); padding: 38px 34px 30px; position: relative;
-  }
-  .auth-card::before {
-    content: ''; position: absolute; left: 0; top: 0; right: 0; height: 2px;
-    background: linear-gradient(90deg, var(--gold-deep), var(--gold), var(--gold-deep));
-  }
-  .auth-folio { font-family: var(--mono); font-size: 10.5px; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-faint); margin-bottom: 18px; }
-  .auth-folio b { color: var(--gold); font-weight: 600; }
-  .auth-title { font-weight: 400; font-size: 20px; line-height: 1.05; color: var(--ink); letter-spacing: .01em; }
-  .auth-title .dot { color: var(--gold); margin: 0 .12em; }
-  .auth-sub { color: var(--ink-soft); font-size: 13.5px; margin: 8px 0 22px; }
-  .auth-l { display: block; font-family: var(--mono); font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-faint); margin: 0 0 6px; }
-  .auth-in {
-    width: 100%; background: var(--bg-2); border: 1px solid var(--line-2); border-radius: 3px;
-    color: var(--ink); font-family: var(--sans); font-size: 14px; padding: 11px 12px; margin-bottom: 16px;
-    outline: none; transition: border-color .15s, box-shadow .15s;
-  }
-  .auth-in:focus { border-color: var(--gold-deep); box-shadow: 0 0 0 3px var(--gold-glow); }
-  .auth-msg { min-height: 18px; font-size: 12.5px; color: var(--amber); margin-bottom: 12px; line-height: 1.45; }
-  .auth-actions { display: flex; gap: 10px; }
-  .auth-actions .btn { flex: 1; justify-content: center; }
-  .auth-foot { font-size: 11.5px; color: var(--ink-faint); margin-top: 16px; line-height: 1.5; }
-  .mast-top-right { display: flex; align-items: center; gap: 14px; }
-  .signout {
-    font-family: var(--mono); font-size: 10px; letter-spacing: .1em; text-transform: uppercase;
-    color: var(--ink-faint); background: none; border: 1px solid var(--line-2); border-radius: 3px;
-    padding: 4px 9px; cursor: pointer; transition: color .15s, border-color .15s;
-  }
-  .signout:hover { color: var(--gold); border-color: var(--gold-deep); }
-</style>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    /* ---------- auth gate (login) ---------- */
+    body.locked > header.masthead,
+    body.locked > nav.index,
+    body.locked > main.wrap { display: none; }
+    .auth-gate { display: none; }
+    body.locked .auth-gate {
+      display: flex; position: fixed; inset: 0; z-index: 100;
+      align-items: center; justify-content: center; padding: 24px;
+      background: radial-gradient(120% 80% at 50% -10%, rgba(216,166,61,.10), transparent 60%), var(--bg);
+    }
+    .auth-card {
+      width: 100%; max-width: 420px; background: var(--panel);
+      border: 1px solid var(--line-2); border-radius: 4px;
+      box-shadow: var(--shadow); padding: 38px 34px 30px; position: relative;
+    }
+    .auth-card::before {
+      content: ''; position: absolute; left: 0; top: 0; right: 0; height: 2px;
+      background: linear-gradient(90deg, var(--gold-deep), var(--gold), var(--gold-deep));
+    }
+    .auth-folio { font-family: var(--mono); font-size: 10.5px; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-faint); margin-bottom: 18px; }
+    .auth-folio b { color: var(--gold); font-weight: 600; }
+    .auth-title { font-weight: 400; font-size: 20px; line-height: 1.05; color: var(--ink); letter-spacing: .01em; }
+    .auth-title .dot { color: var(--gold); margin: 0 .12em; }
+    .auth-sub { color: var(--ink-soft); font-size: 13.5px; margin: 8px 0 22px; }
+    .auth-l { display: block; font-family: var(--mono); font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-faint); margin: 0 0 6px; }
+    .auth-in {
+      width: 100%; background: var(--bg-2); border: 1px solid var(--line-2); border-radius: 3px;
+      color: var(--ink); font-family: var(--sans); font-size: 14px; padding: 11px 12px; margin-bottom: 16px;
+      outline: none; transition: border-color .15s, box-shadow .15s;
+    }
+    .auth-in:focus { border-color: var(--gold-deep); box-shadow: 0 0 0 3px var(--gold-glow); }
+    .auth-msg { min-height: 18px; font-size: 12.5px; color: var(--amber); margin-bottom: 12px; line-height: 1.45; }
+    .auth-actions { display: flex; gap: 10px; }
+    .auth-actions .btn { flex: 1; justify-content: center; }
+    .auth-foot { font-size: 11.5px; color: var(--ink-faint); margin-top: 16px; line-height: 1.5; }
+    .mast-top-right { display: flex; align-items: center; gap: 14px; }
+    .signout {
+      font-family: var(--mono); font-size: 10px; letter-spacing: .1em; text-transform: uppercase;
+      color: var(--ink-faint); background: none; border: 1px solid var(--line-2); border-radius: 3px;
+      padding: 4px 9px; cursor: pointer; transition: color .15s, border-color .15s;
+    }
+    .signout:hover { color: var(--gold); border-color: var(--gold-deep); }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body class="locked">
 
@@ -463,9 +463,8 @@
     <div class="auth-msg" id="au-msg"></div>
     <div class="auth-actions">
       <button class="btn brass" onclick="doAuth('signin')">Zaloguj się</button>
-      <button class="btn" onclick="doAuth('signup')">Załóż konto</button>
     </div>
-    <p class="auth-foot">Pierwszy raz? Kliknij „Załóż konto", potwierdź rejestrację mailem, a potem zaloguj się.</p>
+    <p class="auth-foot">Dostęp tylko dla właściciela. Zaloguj się przy użyciu swojego konta.</p>
   </div>
 </div>
 
@@ -626,170 +625,170 @@
 <div class="toast" id="toast"></div>
 
 <script>
-const TODAY = new Date('2026-06-12');
-const fmtPL = d => new Date(d).toLocaleDateString('pl-PL', { day:'numeric', month:'short', year:'numeric' });
-const daysBetween = (a,b) => Math.round((new Date(b)-new Date(a))/864e5);
+  const TODAY = new Date('2026-06-12');
+  const fmtPL = d => new Date(d).toLocaleDateString('pl-PL', { day:'numeric', month:'short', year:'numeric' });
+  const daysBetween = (a,b) => Math.round((new Date(b)-new Date(a))/864e5);
 
-/* ---------- backend (Supabase: Auth + Postgres + RLS) ---------- */
-const SUPA_URL = 'https://kjvihylbtyzcvtfjtfhq.supabase.co';
-const SUPA_KEY = 'sb_publishable_bEOfzfAdpSRKtIYlSzfbHg_gbq6eyAj';
-const sb = (window.supabase && window.supabase.createClient)
-  ? window.supabase.createClient(SUPA_URL, SUPA_KEY)
-  : null;
+  /* ---------- backend (Supabase: Auth + Postgres + RLS) ---------- */
+  const SUPA_URL = 'https://kjvihylbtyzcvtfjtfhq.supabase.co';
+  const SUPA_KEY = 'sb_publishable_bEOfzfAdpSRKtIYlSzfbHg_gbq6eyAj';
+  const sb = (window.supabase && window.supabase.createClient)
+          ? window.supabase.createClient(SUPA_URL, SUPA_KEY)
+          : null;
 
-/* row <-> app-object mapping (DB column `descr` <-> app field `desc`) */
-const rowToTask  = r => ({ id:r.id, title:r.title, desc:r.descr||'', cat:r.cat, date:r.date, done:r.done });
-const rowToIssue = r => ({ id:r.id, title:r.title, desc:r.descr||'', pri:r.pri, status:r.status, created:r.created, log:r.log||[] });
+  /* row <-> app-object mapping (DB column `descr` <-> app field `desc`) */
+  const rowToTask  = r => ({ id:r.id, title:r.title, desc:r.descr||'', cat:r.cat, date:r.date, done:r.done });
+  const rowToIssue = r => ({ id:r.id, title:r.title, desc:r.descr||'', pri:r.pri, status:r.status, created:r.created, log:r.log||[] });
 
-async function fetchTasks() {
-  const { data, error } = await sb.from('ld_tasks').select('*').order('id');
-  if (error) { console.error(error); toast('Błąd wczytywania zadań'); return []; }
-  return data.map(rowToTask);
-}
-async function fetchIssues() {
-  const { data, error } = await sb.from('ld_issues').select('*').order('id');
-  if (error) { console.error(error); toast('Błąd wczytywania zgłoszeń'); return []; }
-  return data.map(rowToIssue);
-}
-/* one-time seed of starter data when the account is empty */
-async function seedIfEmpty() {
-  const { count:tc } = await sb.from('ld_tasks').select('id', { count:'exact', head:true });
-  if (tc === 0) {
-    await sb.from('ld_tasks').insert(seedTasks().map(t=>({ title:t.title, descr:t.desc, cat:t.cat, date:t.date, done:t.done })));
+  async function fetchTasks() {
+    const { data, error } = await sb.from('ld_tasks').select('*').order('id');
+    if (error) { console.error(error); toast('Błąd wczytywania zadań'); return []; }
+    return data.map(rowToTask);
   }
-  const { count:ic } = await sb.from('ld_issues').select('id', { count:'exact', head:true });
-  if (ic === 0) {
-    await sb.from('ld_issues').insert(seedIssues().map(i=>({ title:i.title, descr:i.desc, pri:i.pri, status:i.status, created:i.created, log:i.log })));
+  async function fetchIssues() {
+    const { data, error } = await sb.from('ld_issues').select('*').order('id');
+    if (error) { console.error(error); toast('Błąd wczytywania zgłoszeń'); return []; }
+    return data.map(rowToIssue);
   }
-}
+  /* one-time seed of starter data when the account is empty */
+  async function seedIfEmpty() {
+    const { count:tc } = await sb.from('ld_tasks').select('id', { count:'exact', head:true });
+    if (tc === 0) {
+      await sb.from('ld_tasks').insert(seedTasks().map(t=>({ title:t.title, descr:t.desc, cat:t.cat, date:t.date, done:t.done })));
+    }
+    const { count:ic } = await sb.from('ld_issues').select('id', { count:'exact', head:true });
+    if (ic === 0) {
+      await sb.from('ld_issues').insert(seedIssues().map(i=>({ title:i.title, descr:i.desc, pri:i.pri, status:i.status, created:i.created, log:i.log })));
+    }
+  }
 
-/* ---------- seed data ---------- */
-function seedTasks() {
-  return [
-    { id:1, title:'Przegląd szczelności instalacji gazowej', desc:'Obowiązkowa coroczna kontrola — kuchenka gazowa. Wymagane uprawnienia gazowe.', cat:'tech', date:'2026-09-15', done:false },
-    { id:2, title:'Przegląd przewodów kominowych / wentylacyjnych', desc:'Coroczna kontrola wentylacji (kominiarz) — szczególnie przy gazie.', cat:'tech', date:'2026-09-15', done:false },
-    { id:3, title:'Okresowa kontrola instalacji elektrycznej (5 lat)', desc:'Badanie instalacji i odgromowej — co 5 lat. Sprawdź datę ostatniego protokołu.', cat:'tech', date:'2026-11-30', done:false },
-    { id:4, title:'Wymiana / sprawdzenie czujnika czadu i dymu', desc:'Sprawdź baterię i datę ważności czujnika tlenku węgla (przy gazie — krytyczne).', cat:'tech', date:'2026-10-01', done:false },
-    { id:5, title:'Decyzja: przedłużyć umowę czy renegocjować', desc:'Umowa kończy się 31.10. Zacznij rozmowę z najemcą ~2 mies. wcześniej. Rozważ podniesienie czynszu do rynku.', cat:'legal', date:'2026-08-31', done:false },
-    { id:6, title:'Rozliczenie roczne PIT — najem (ryczałt)', desc:'PIT-28 za 2026 r. składany do końca lutego 2027. Zbierz dowody wpłat ryczałtu.', cat:'fin', date:'2027-02-28', done:false },
-    { id:7, title:'Przegląd stawki czynszu vs. rynek', desc:'Sprawdź aktualne oferty najmu w okolicy Ronda ONZ. Twój czynsz jest wyraźnie poniżej rynku.', cat:'fin', date:'2026-07-15', done:false },
-    { id:8, title:'Aktualizacja zaliczek na media', desc:'Sprawdź, czy 650 zł na media (spółdzielnia 500 + gaz 50 + prąd 100) pokrywa realne zużycie.', cat:'fin', date:'2026-12-15', done:false },
-    { id:9, title:'Przegląd polisy ubezpieczenia mieszkania', desc:'Odnowienie OC i ubezpieczenia lokalu pod wynajem. Sprawdź zakres dla najmu.', cat:'legal', date:'2026-10-20', done:false },
-    { id:10, title:'Serwis / odkamienianie sprzętu AGD', desc:'Pralka, piekarnik — przegląd stanu. Kontrola uszczelek, filtrów, kamienia.', cat:'tech', date:'2027-01-15', done:false },
+  /* ---------- seed data ---------- */
+  function seedTasks() {
+    return [
+      { id:1, title:'Przegląd szczelności instalacji gazowej', desc:'Obowiązkowa coroczna kontrola — kuchenka gazowa. Wymagane uprawnienia gazowe.', cat:'tech', date:'2026-09-15', done:false },
+      { id:2, title:'Przegląd przewodów kominowych / wentylacyjnych', desc:'Coroczna kontrola wentylacji (kominiarz) — szczególnie przy gazie.', cat:'tech', date:'2026-09-15', done:false },
+      { id:3, title:'Okresowa kontrola instalacji elektrycznej (5 lat)', desc:'Badanie instalacji i odgromowej — co 5 lat. Sprawdź datę ostatniego protokołu.', cat:'tech', date:'2026-11-30', done:false },
+      { id:4, title:'Wymiana / sprawdzenie czujnika czadu i dymu', desc:'Sprawdź baterię i datę ważności czujnika tlenku węgla (przy gazie — krytyczne).', cat:'tech', date:'2026-10-01', done:false },
+      { id:5, title:'Decyzja: przedłużyć umowę czy renegocjować', desc:'Umowa kończy się 31.10. Zacznij rozmowę z najemcą ~2 mies. wcześniej. Rozważ podniesienie czynszu do rynku.', cat:'legal', date:'2026-08-31', done:false },
+      { id:6, title:'Rozliczenie roczne PIT — najem (ryczałt)', desc:'PIT-28 za 2026 r. składany do końca lutego 2027. Zbierz dowody wpłat ryczałtu.', cat:'fin', date:'2027-02-28', done:false },
+      { id:7, title:'Przegląd stawki czynszu vs. rynek', desc:'Sprawdź aktualne oferty najmu w okolicy Ronda ONZ. Twój czynsz jest wyraźnie poniżej rynku.', cat:'fin', date:'2026-07-15', done:false },
+      { id:8, title:'Aktualizacja zaliczek na media', desc:'Sprawdź, czy 650 zł na media (spółdzielnia 500 + gaz 50 + prąd 100) pokrywa realne zużycie.', cat:'fin', date:'2026-12-15', done:false },
+      { id:9, title:'Przegląd polisy ubezpieczenia mieszkania', desc:'Odnowienie OC i ubezpieczenia lokalu pod wynajem. Sprawdź zakres dla najmu.', cat:'legal', date:'2026-10-20', done:false },
+      { id:10, title:'Serwis / odkamienianie sprzętu AGD', desc:'Pralka, piekarnik — przegląd stanu. Kontrola uszczelek, filtrów, kamienia.', cat:'tech', date:'2027-01-15', done:false },
+    ];
+  }
+  function seedIssues() {
+    return [
+      { id:101, title:'Obniżone ciśnienie zimnej wody w łazience', desc:'Najemca zgłasza słaby strumień zimnej wody w umywalce i prysznicu od kilku dni. Ciepła woda OK.', pri:'med', status:1, created:'2026-06-09', log:[{when:'2026-06-09', txt:'Zgłoszone przez najemcę (SMS)'},{when:'2026-06-10', txt:'Wstępna diagnoza: prawdopodobnie zapowietrzony perlator lub osad. Umówiony hydraulik.'}] },
+    ];
+  }
+
+  let tasks=[], issues=[], taskFilter='all', issueFilter='all';
+  const STATUS_STEPS = ['Zgłoszone','W diagnozie','W naprawie','Rozliczone'];
+
+  /* ---------- tabs ---------- */
+  const TABS = [
+    { id:'dashboard', label:'Przegląd', no:'01' },
+    { id:'tasks',     label:'Obowiązki roczne', no:'02' },
+    { id:'issues',    label:'Zgłoszenia', no:'03' },
+    { id:'alerts',    label:'Alerty', no:'04' },
   ];
-}
-function seedIssues() {
-  return [
-    { id:101, title:'Obniżone ciśnienie zimnej wody w łazience', desc:'Najemca zgłasza słaby strumień zimnej wody w umywalce i prysznicu od kilku dni. Ciepła woda OK.', pri:'med', status:1, created:'2026-06-09', log:[{when:'2026-06-09', txt:'Zgłoszone przez najemcę (SMS)'},{when:'2026-06-10', txt:'Wstępna diagnoza: prawdopodobnie zapowietrzony perlator lub osad. Umówiony hydraulik.'}] },
-  ];
-}
-
-let tasks=[], issues=[], taskFilter='all', issueFilter='all';
-const STATUS_STEPS = ['Zgłoszone','W diagnozie','W naprawie','Rozliczone'];
-
-/* ---------- tabs ---------- */
-const TABS = [
-  { id:'dashboard', label:'Przegląd', no:'01' },
-  { id:'tasks',     label:'Obowiązki roczne', no:'02' },
-  { id:'issues',    label:'Zgłoszenia', no:'03' },
-  { id:'alerts',    label:'Alerty', no:'04' },
-];
-function renderTabs() {
-  const openIssues = issues.filter(i=>i.status<3).length;
-  const alertCount = computeAlerts().length;
-  const active = document.querySelector('.tab.active')?.dataset.tab || 'dashboard';
-  document.getElementById('tabsWrap').innerHTML = TABS.map(t=>{
-    let badge='';
-    if(t.id==='issues' && openIssues) badge=`<span class="badge">${openIssues}</span>`;
-    if(t.id==='alerts' && alertCount) badge=`<span class="badge">${alertCount}</span>`;
-    return `<button class="tab ${t.id===active?'active':''}" data-tab="${t.id}" onclick="switchTab('${t.id}')">
+  function renderTabs() {
+    const openIssues = issues.filter(i=>i.status<3).length;
+    const alertCount = computeAlerts().length;
+    const active = document.querySelector('.tab.active')?.dataset.tab || 'dashboard';
+    document.getElementById('tabsWrap').innerHTML = TABS.map(t=>{
+      let badge='';
+      if(t.id==='issues' && openIssues) badge=`<span class="badge">${openIssues}</span>`;
+      if(t.id==='alerts' && alertCount) badge=`<span class="badge">${alertCount}</span>`;
+      return `<button class="tab ${t.id===active?'active':''}" data-tab="${t.id}" onclick="switchTab('${t.id}')">
       <span class="tab-no">${t.no}</span><span class="tab-label">${t.label}</span>${badge}</button>`;
-  }).join('');
-}
-function switchTab(id) {
-  document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active', t.dataset.tab===id));
-  document.querySelectorAll('.view').forEach(v=>v.classList.toggle('active', v.id==='view-'+id));
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-}
+    }).join('');
+  }
+  function switchTab(id) {
+    document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active', t.dataset.tab===id));
+    document.querySelectorAll('.view').forEach(v=>v.classList.toggle('active', v.id==='view-'+id));
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
 
-/* ---------- health strip ---------- */
-function renderHealth() {
-  const open = issues.filter(i=>i.status<3).length;
-  const overdue = tasks.filter(t=>!t.done && daysBetween(TODAY,t.date)<0).length;
-  const soon = tasks.filter(t=>!t.done && daysBetween(TODAY,t.date)>=0 && daysBetween(TODAY,t.date)<=45).length;
-  const daysToEnd = daysBetween(TODAY,'2026-10-31');
-  const items = [
-    { l:'Na rękę / mies.', v:'1 830', s:'zł', t:'stabilnie', cls:'flat' },
-    { l:'Potencjał do rynku', v:'+1 350', s:'zł/mc', t:'czynsz poniżej okolicy', cls:'up' },
-    { l:'Otwarte zgłoszenia', v:open, s:'', t:open?'wymaga działania':'wszystko zamknięte', cls:open?'down':'up' },
-    { l:'Zadania pilne · 45 dni', v:soon+overdue, s:'', t:overdue?`${overdue} po terminie`:(soon?'na bieżąco':'czysto'), cls:overdue?'down':(soon?'flat':'up') },
-    { l:'Do końca umowy', v:daysToEnd, s:'dni', t:'31.10.2026', cls:'flat' },
-  ];
-  document.getElementById('healthStrip').innerHTML = items.map(i=>`
+  /* ---------- health strip ---------- */
+  function renderHealth() {
+    const open = issues.filter(i=>i.status<3).length;
+    const overdue = tasks.filter(t=>!t.done && daysBetween(TODAY,t.date)<0).length;
+    const soon = tasks.filter(t=>!t.done && daysBetween(TODAY,t.date)>=0 && daysBetween(TODAY,t.date)<=45).length;
+    const daysToEnd = daysBetween(TODAY,'2026-10-31');
+    const items = [
+      { l:'Na rękę / mies.', v:'1 830', s:'zł', t:'stabilnie', cls:'flat' },
+      { l:'Potencjał do rynku', v:'+1 350', s:'zł/mc', t:'czynsz poniżej okolicy', cls:'up' },
+      { l:'Otwarte zgłoszenia', v:open, s:'', t:open?'wymaga działania':'wszystko zamknięte', cls:open?'down':'up' },
+      { l:'Zadania pilne · 45 dni', v:soon+overdue, s:'', t:overdue?`${overdue} po terminie`:(soon?'na bieżąco':'czysto'), cls:overdue?'down':(soon?'flat':'up') },
+      { l:'Do końca umowy', v:daysToEnd, s:'dni', t:'31.10.2026', cls:'flat' },
+    ];
+    document.getElementById('healthStrip').innerHTML = items.map(i=>`
     <div class="hs">
       <div class="hs-k">${i.l}</div>
       <div class="hs-v">${i.v}${i.s?` <span>${i.s}</span>`:''}</div>
       ${i.t?`<div class="hs-t ${i.cls}">${i.t}</div>`:''}
     </div>`).join('');
-}
+  }
 
-/* ---------- dashboard ---------- */
-function renderDashboard() {
-  // KPIs
-  const kpis = [
-    { lbl:'Czynsz najmu', num:'2 000', s:'zł/mc', foot:'bez mediów' },
-    { lbl:'Podatek ryczałt', num:'170', s:'zł/mc', foot:'8,5% od 2 000 zł' },
-    { lbl:'Rentowność brutto', num:'~4,3', s:'%', foot:'najem / wartość lokalu' },
-    { lbl:'Wartość lokalu', num:'~620', s:'tys. zł', foot:'≈22,1 tys. zł/m²' },
-  ];
-  document.getElementById('kpiRow').innerHTML = kpis.map(k=>`
+  /* ---------- dashboard ---------- */
+  function renderDashboard() {
+    // KPIs
+    const kpis = [
+      { lbl:'Czynsz najmu', num:'2 000', s:'zł/mc', foot:'bez mediów' },
+      { lbl:'Podatek ryczałt', num:'170', s:'zł/mc', foot:'8,5% od 2 000 zł' },
+      { lbl:'Rentowność brutto', num:'~4,3', s:'%', foot:'najem / wartość lokalu' },
+      { lbl:'Wartość lokalu', num:'~620', s:'tys. zł', foot:'≈22,1 tys. zł/m²' },
+    ];
+    document.getElementById('kpiRow').innerHTML = kpis.map(k=>`
     <div class="kpi"><div class="kpi-k">${k.lbl}</div>
     <div class="kpi-v">${k.num} <span>${k.s}</span></div><div class="kpi-f">${k.foot}</div></div>`).join('');
 
-  // waterfall
-  const wf = [
-    { l:'Czynsz całkowity', amt:2650, col:'var(--teal)', w:100 },
-    { l:'− Media (spółdz.)', amt:-500, col:'var(--ink-faint)', w:19, neg:true },
-    { l:'− Gaz', amt:-50, col:'var(--ink-faint)', w:4, neg:true },
-    { l:'− Prąd', amt:-100, col:'var(--ink-faint)', w:6, neg:true },
-    { l:'div' },
-    { l:'Czynsz dla Ciebie', amt:2000, col:'var(--gold)', w:75 },
-    { l:'− Ryczałt 8,5%', amt:-170, col:'var(--clay)', w:9, neg:true },
-    { l:'div' },
-    { l:'Na rękę', amt:1830, col:'var(--sage)', w:69, big:true },
-  ];
-  document.getElementById('waterfall').innerHTML = wf.map(r=>{
-    if(r.l==='div') return '<div class="wf-rule"></div>';
-    const sign = r.neg?'−':'';
-    const val = Math.abs(r.amt);
-    return `<div class="wf-row ${r.big?'big':''} ${r.neg?'neg':''}">
+    // waterfall
+    const wf = [
+      { l:'Czynsz całkowity', amt:2650, col:'var(--teal)', w:100 },
+      { l:'− Media (spółdz.)', amt:-500, col:'var(--ink-faint)', w:19, neg:true },
+      { l:'− Gaz', amt:-50, col:'var(--ink-faint)', w:4, neg:true },
+      { l:'− Prąd', amt:-100, col:'var(--ink-faint)', w:6, neg:true },
+      { l:'div' },
+      { l:'Czynsz dla Ciebie', amt:2000, col:'var(--gold)', w:75 },
+      { l:'− Ryczałt 8,5%', amt:-170, col:'var(--clay)', w:9, neg:true },
+      { l:'div' },
+      { l:'Na rękę', amt:1830, col:'var(--sage)', w:69, big:true },
+    ];
+    document.getElementById('waterfall').innerHTML = wf.map(r=>{
+      if(r.l==='div') return '<div class="wf-rule"></div>';
+      const sign = r.neg?'−':'';
+      const val = Math.abs(r.amt);
+      return `<div class="wf-row ${r.big?'big':''} ${r.neg?'neg':''}">
       <div class="wf-k">${r.l}</div>
       <div class="wf-track"><div class="wf-fill" style="width:${r.w}%;background:${r.col}"></div></div>
       <div class="wf-amt">${sign}${val.toLocaleString('pl-PL')}</div>
     </div>`;
-  }).join('');
+    }).join('');
 
-  // rent benchmark gauge
-  const myRent=2000, median=3350, low=1800, high=3600;
-  const gapPct = Math.round((myRent/median-1)*100);
-  document.getElementById('gapPct').textContent = `(${gapPct}%)`;
-  document.getElementById('gaugeSub').textContent = `vs. mediana okolicy ~3 350 zł · ${Math.abs(gapPct)}% poniżej rynku`;
-  const pos = ((myRent-low)/(high-low))*100;
-  const medPos = ((median-low)/(high-low))*100;
-  document.getElementById('rangeBar').innerHTML = `
+    // rent benchmark gauge
+    const myRent=2000, median=3350, low=1800, high=3600;
+    const gapPct = Math.round((myRent/median-1)*100);
+    document.getElementById('gapPct').textContent = `(${gapPct}%)`;
+    document.getElementById('gaugeSub').textContent = `vs. mediana okolicy ~3 350 zł · ${Math.abs(gapPct)}% poniżej rynku`;
+    const pos = ((myRent-low)/(high-low))*100;
+    const medPos = ((median-low)/(high-low))*100;
+    document.getElementById('rangeBar').innerHTML = `
     <div class="range-track"></div>
     <div class="tick" style="left:${medPos}%" data-label="mediana 3 350"></div>
     <div class="tick you" style="left:${pos}%" data-label="Ty · 2 000"></div>`;
-  document.getElementById('rentInsight').innerHTML = `Twój czynsz jest <strong>ok. ${Math.abs(gapPct)}% poniżej</strong> mediany okolicy. Przy odnowieniu umowy realny pułap to <strong>3 000–3 300 zł</strong> — to <strong>+1 000–1 300 zł/mc</strong> (po podatku ~+915–1 190 zł). Warto rozważyć stopniową podwyżkę, by nie stracić sprawdzonego najemcy.`;
+    document.getElementById('rentInsight').innerHTML = `Twój czynsz jest <strong>ok. ${Math.abs(gapPct)}% poniżej</strong> mediany okolicy. Przy odnowieniu umowy realny pułap to <strong>3 000–3 300 zł</strong> — to <strong>+1 000–1 300 zł/mc</strong> (po podatku ~+915–1 190 zł). Warto rozważyć stopniową podwyżkę, by nie stracić sprawdzonego najemcy.`;
 
-  // value spark
-  const pts=[18800,19400,20100,20600,21200,21500,21900,22100];
-  const max=Math.max(...pts), min=Math.min(...pts), W=400, H=156, pad=8;
-  const xs=i=>pad+(i/(pts.length-1))*(W-pad*2);
-  const ys=v=>H-pad-((v-min)/(max-min))*(H-pad*2-16);
-  let path=pts.map((v,i)=>`${i===0?'M':'L'}${xs(i).toFixed(1)},${ys(v).toFixed(1)}`).join(' ');
-  let area=path+` L${xs(pts.length-1)},${H} L${xs(0)},${H} Z`;
-  document.getElementById('valueSpark').innerHTML = `
+    // value spark
+    const pts=[18800,19400,20100,20600,21200,21500,21900,22100];
+    const max=Math.max(...pts), min=Math.min(...pts), W=400, H=156, pad=8;
+    const xs=i=>pad+(i/(pts.length-1))*(W-pad*2);
+    const ys=v=>H-pad-((v-min)/(max-min))*(H-pad*2-16);
+    let path=pts.map((v,i)=>`${i===0?'M':'L'}${xs(i).toFixed(1)},${ys(v).toFixed(1)}`).join(' ');
+    let area=path+` L${xs(pts.length-1)},${H} L${xs(0)},${H} Z`;
+    document.getElementById('valueSpark').innerHTML = `
     <defs><linearGradient id="vg" x1="0" y1="0" x2="0" y2="1">
       <stop offset="0%" stop-color="rgba(216,166,61,.30)"/><stop offset="100%" stop-color="rgba(216,166,61,0)"/>
     </linearGradient></defs>
@@ -799,41 +798,41 @@ function renderDashboard() {
     <text x="${xs(0)}" y="${H-3}" font-size="9" fill="var(--ink-faint)" font-family="JetBrains Mono">2023</text>
     <text x="${xs(pts.length-1)}" y="${H-3}" font-size="9" fill="var(--ink-faint)" text-anchor="end" font-family="JetBrains Mono">2026</text>`;
 
-  // yield
-  const annualNet = 1830*12;
-  const annualPotential = 3100*0.915*12;
-  document.getElementById('yieldBox').innerHTML = `
+    // yield
+    const annualNet = 1830*12;
+    const annualPotential = 3100*0.915*12;
+    document.getElementById('yieldBox').innerHTML = `
     <div class="panel-h" style="margin:-24px -24px 4px;">Rentowność najmu</div>
     <div class="y-row"><span class="k">Roczny dochód netto (obecny)</span><span class="v">${annualNet.toLocaleString('pl-PL')} zł</span></div>
     <div class="y-row"><span class="k">Rentowność netto (obecna)</span><span class="v">${(annualNet/620000*100).toFixed(1)} %</span></div>
     <div class="hr"></div>
     <div class="y-row hl"><span class="k">Potencjał przy ~3 100 zł</span><span class="v">${Math.round(annualPotential).toLocaleString('pl-PL')} zł/rok</span></div>
     <div class="y-note">Podniesienie do rynkowego poziomu zwiększyłoby rentowność netto do <strong>~5,5%</strong> — wyraźnie powyżej obecnych ~3,5%.</div>`;
-}
+  }
 
-/* ---------- tasks ---------- */
-const CAT_LABEL = { tech:'Instalacje', legal:'Prawne', fin:'Finanse' };
-function renderTaskFilters() {
-  const fs = [['all','Wszystkie'],['tech','Instalacje'],['legal','Prawne'],['fin','Finanse'],['todo','Do zrobienia']];
-  document.getElementById('taskFilters').innerHTML = fs.map(([k,l])=>
-    `<button class="filt ${taskFilter===k?'active':''}" onclick="setTaskFilter('${k}')">${l}</button>`).join('');
-}
-function setTaskFilter(f){ taskFilter=f; renderTaskFilters(); renderTasks(); }
-function renderTasks() {
-  let list = [...tasks].sort((a,b)=> (a.done-b.done) || (new Date(a.date)-new Date(b.date)) );
-  if(taskFilter==='todo') list=list.filter(t=>!t.done);
-  else if(taskFilter!=='all') list=list.filter(t=>t.cat===taskFilter);
-  const el = document.getElementById('taskList');
-  if(!list.length){ el.innerHTML='<div class="empty">Brak zadań w tym widoku.</div>'; return; }
-  el.innerHTML = list.map(t=>{
-    const dd = daysBetween(TODAY,t.date);
-    let datePill='';
-    if(!t.done){
-      if(dd<0) datePill=`<span class="pill overdue">${-dd} dni po terminie</span>`;
-      else if(dd<=45) datePill=`<span class="pill due-soon">za ${dd} dni</span>`;
-      else datePill=`<span class="pill ok">${dd} dni</span>`;
-    }
-    return `<div class="task ${t.done?'done':''}" onclick="toggleTask(${t.id})">
+  /* ---------- tasks ---------- */
+  const CAT_LABEL = { tech:'Instalacje', legal:'Prawne', fin:'Finanse' };
+  function renderTaskFilters() {
+    const fs = [['all','Wszystkie'],['tech','Instalacje'],['legal','Prawne'],['fin','Finanse'],['todo','Do zrobienia']];
+    document.getElementById('taskFilters').innerHTML = fs.map(([k,l])=>
+            `<button class="filt ${taskFilter===k?'active':''}" onclick="setTaskFilter('${k}')">${l}</button>`).join('');
+  }
+  function setTaskFilter(f){ taskFilter=f; renderTaskFilters(); renderTasks(); }
+  function renderTasks() {
+    let list = [...tasks].sort((a,b)=> (a.done-b.done) || (new Date(a.date)-new Date(b.date)) );
+    if(taskFilter==='todo') list=list.filter(t=>!t.done);
+    else if(taskFilter!=='all') list=list.filter(t=>t.cat===taskFilter);
+    const el = document.getElementById('taskList');
+    if(!list.length){ el.innerHTML='<div class="empty">Brak zadań w tym widoku.</div>'; return; }
+    el.innerHTML = list.map(t=>{
+      const dd = daysBetween(TODAY,t.date);
+      let datePill='';
+      if(!t.done){
+        if(dd<0) datePill=`<span class="pill overdue">${-dd} dni po terminie</span>`;
+        else if(dd<=45) datePill=`<span class="pill due-soon">za ${dd} dni</span>`;
+        else datePill=`<span class="pill ok">${dd} dni</span>`;
+      }
+      return `<div class="task ${t.done?'done':''}" onclick="toggleTask(${t.id})">
       <div class="check"><svg viewBox="0 0 24 24" fill="none" stroke-width="3.2"><polyline points="20 6 9 17 4 12"/></svg></div>
       <div class="task-body">
         <div class="task-title">${t.title}</div>
@@ -842,55 +841,55 @@ function renderTasks() {
       </div>
       <div class="task-date">${fmtPL(t.date)}</div>
     </div>`;
-  }).join('');
-}
-async function toggleTask(id){
-  const t=tasks.find(x=>x.id===id); if(!t)return;
-  const next=!t.done;
-  const { error } = await sb.from('ld_tasks').update({ done:next }).eq('id', id);
-  if(error){ console.error(error); toast('Nie udało się zapisać zmiany'); return; }
-  t.done=next;
-  renderTasks(); renderHealth(); renderTabs(); renderAlerts();
-  if(t.done) toast('Odhaczone — wróci w kolejnym cyklu');
-}
-function openTaskModal(){ document.getElementById('tm-date').value='2026-12-01'; document.getElementById('taskModal').classList.add('open'); }
-async function saveTask(){
-  const title=document.getElementById('tm-title').value.trim();
-  if(!title){toast('Podaj nazwę zadania');return;}
-  const row={ title, descr:document.getElementById('tm-desc').value.trim(),
-    cat:document.getElementById('tm-cat').value, date:document.getElementById('tm-date').value||'2026-12-01', done:false };
-  const { data, error } = await sb.from('ld_tasks').insert(row).select().single();
-  if(error){ console.error(error); toast('Nie udało się dodać zadania'); return; }
-  tasks.push(rowToTask(data));
-  closeModal('taskModal');
-  ['tm-title','tm-desc'].forEach(i=>document.getElementById(i).value='');
-  renderTasks(); renderHealth(); renderAlerts(); renderTabs(); toast('Zadanie dodane');
-}
+    }).join('');
+  }
+  async function toggleTask(id){
+    const t=tasks.find(x=>x.id===id); if(!t)return;
+    const next=!t.done;
+    const { error } = await sb.from('ld_tasks').update({ done:next }).eq('id', id);
+    if(error){ console.error(error); toast('Nie udało się zapisać zmiany'); return; }
+    t.done=next;
+    renderTasks(); renderHealth(); renderTabs(); renderAlerts();
+    if(t.done) toast('Odhaczone — wróci w kolejnym cyklu');
+  }
+  function openTaskModal(){ document.getElementById('tm-date').value='2026-12-01'; document.getElementById('taskModal').classList.add('open'); }
+  async function saveTask(){
+    const title=document.getElementById('tm-title').value.trim();
+    if(!title){toast('Podaj nazwę zadania');return;}
+    const row={ title, descr:document.getElementById('tm-desc').value.trim(),
+      cat:document.getElementById('tm-cat').value, date:document.getElementById('tm-date').value||'2026-12-01', done:false };
+    const { data, error } = await sb.from('ld_tasks').insert(row).select().single();
+    if(error){ console.error(error); toast('Nie udało się dodać zadania'); return; }
+    tasks.push(rowToTask(data));
+    closeModal('taskModal');
+    ['tm-title','tm-desc'].forEach(i=>document.getElementById(i).value='');
+    renderTasks(); renderHealth(); renderAlerts(); renderTabs(); toast('Zadanie dodane');
+  }
 
-/* ---------- issues ---------- */
-function renderIssueFilters(){
-  const fs=[['all','Wszystkie'],['open','Otwarte'],['high','Pilne'],['closed','Rozliczone']];
-  document.getElementById('issueFilters').innerHTML = fs.map(([k,l])=>
-    `<button class="filt ${issueFilter===k?'active':''}" onclick="setIssueFilter('${k}')">${l}</button>`).join('');
-}
-function setIssueFilter(f){ issueFilter=f; renderIssueFilters(); renderIssues(); }
-const PRI = { low:['Niski','ok'], med:['Średni','due-soon'], high:['Wysoki','overdue'] };
-function renderIssues(){
-  let list=[...issues].sort((a,b)=> (a.status-b.status) || (new Date(b.created)-new Date(a.created)));
-  if(issueFilter==='open') list=list.filter(i=>i.status<3);
-  else if(issueFilter==='high') list=list.filter(i=>i.pri==='high');
-  else if(issueFilter==='closed') list=list.filter(i=>i.status===3);
-  const el=document.getElementById('issueList');
-  if(!list.length){ el.innerHTML='<div class="panel"><div class="empty"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg><div>Brak zgłoszeń w tym widoku.</div></div></div>'; return; }
-  el.innerHTML = list.map(i=>{
-    const age=daysBetween(i.created,TODAY);
-    const steps=STATUS_STEPS.map((s,idx)=>`
+  /* ---------- issues ---------- */
+  function renderIssueFilters(){
+    const fs=[['all','Wszystkie'],['open','Otwarte'],['high','Pilne'],['closed','Rozliczone']];
+    document.getElementById('issueFilters').innerHTML = fs.map(([k,l])=>
+            `<button class="filt ${issueFilter===k?'active':''}" onclick="setIssueFilter('${k}')">${l}</button>`).join('');
+  }
+  function setIssueFilter(f){ issueFilter=f; renderIssueFilters(); renderIssues(); }
+  const PRI = { low:['Niski','ok'], med:['Średni','due-soon'], high:['Wysoki','overdue'] };
+  function renderIssues(){
+    let list=[...issues].sort((a,b)=> (a.status-b.status) || (new Date(b.created)-new Date(a.created)));
+    if(issueFilter==='open') list=list.filter(i=>i.status<3);
+    else if(issueFilter==='high') list=list.filter(i=>i.pri==='high');
+    else if(issueFilter==='closed') list=list.filter(i=>i.status===3);
+    const el=document.getElementById('issueList');
+    if(!list.length){ el.innerHTML='<div class="panel"><div class="empty"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg><div>Brak zgłoszeń w tym widoku.</div></div></div>'; return; }
+    el.innerHTML = list.map(i=>{
+      const age=daysBetween(i.created,TODAY);
+      const steps=STATUS_STEPS.map((s,idx)=>`
       <div class="st-step ${idx<i.status?'done':''} ${idx===i.status?'active':''}">
         ${idx>0?'<div class="st-line"></div>':''}
         <div class="st-dot"></div><div class="st-label">${s}</div>
       </div>`).join('');
-    const logHtml = i.log.map(l=>`<div class="log-row"><span class="when">${fmtPL(l.when)}</span> — ${l.txt}</div>`).join('');
-    return `<div class="panel issue">
+      const logHtml = i.log.map(l=>`<div class="log-row"><span class="when">${fmtPL(l.when)}</span> — ${l.txt}</div>`).join('');
+      return `<div class="panel issue">
       <div class="issue-head">
         <div><div class="issue-title">${i.title}</div><div class="issue-num">#${i.id} · zgłoszone ${fmtPL(i.created)} · ${age} dni temu</div></div>
         <span class="pill ${PRI[i.pri][1]}">${PRI[i.pri][0]}</span>
@@ -906,129 +905,124 @@ function renderIssues(){
         </div>
       </div>
     </div>`;
-  }).join('');
-}
-async function advanceIssue(id){
-  const i=issues.find(x=>x.id===id); if(!i||i.status>=3)return;
-  const status=i.status+1;
-  const log=[...i.log, {when:'2026-06-12', txt:`Status zmieniony na: ${STATUS_STEPS[status]}`}];
-  const { error } = await sb.from('ld_issues').update({ status, log }).eq('id', id);
-  if(error){ console.error(error); toast('Nie udało się zapisać statusu'); return; }
-  i.status=status; i.log=log;
-  renderIssues(); renderHealth(); renderTabs(); renderAlerts(); toast('Status zaktualizowany');
-}
-async function closeIssue(id){
-  const i=issues.find(x=>x.id===id); if(!i)return;
-  const log=[...i.log, {when:'2026-06-12', txt:'Zgłoszenie zamknięte i rozliczone'}];
-  const { error } = await sb.from('ld_issues').update({ status:3, log }).eq('id', id);
-  if(error){ console.error(error); toast('Nie udało się zamknąć zgłoszenia'); return; }
-  i.status=3; i.log=log;
-  renderIssues(); renderHealth(); renderTabs(); renderAlerts(); toast('Zgłoszenie zamknięte');
-}
-async function reopenIssue(id){
-  const i=issues.find(x=>x.id===id); if(!i)return;
-  const log=[...i.log, {when:'2026-06-12', txt:'Otwarte ponownie'}];
-  const { error } = await sb.from('ld_issues').update({ status:2, log }).eq('id', id);
-  if(error){ console.error(error); toast('Nie udało się zapisać'); return; }
-  i.status=2; i.log=log;
-  renderIssues(); renderHealth(); renderTabs(); renderAlerts();
-}
-function openIssueModal(){ document.getElementById('issueModal').classList.add('open'); }
-async function saveIssue(){
-  const title=document.getElementById('im-title').value.trim();
-  if(!title){toast('Podaj czego dotyczy zgłoszenie');return;}
-  const row={ title, descr:document.getElementById('im-desc').value.trim()||'(brak szczegółów)',
-    pri:document.getElementById('im-pri').value, status:0, created:'2026-06-12',
-    log:[{when:'2026-06-12', txt:'Zgłoszone — zarejestrowane przez wynajmującego'}] };
-  const { data, error } = await sb.from('ld_issues').insert(row).select().single();
-  if(error){ console.error(error); toast('Nie udało się zarejestrować zgłoszenia'); return; }
-  issues.push(rowToIssue(data));
-  closeModal('issueModal');
-  ['im-title','im-desc'].forEach(i=>document.getElementById(i).value='');
-  renderIssues(); renderHealth(); renderTabs(); renderAlerts(); toast('Zgłoszenie zarejestrowane');
-}
+    }).join('');
+  }
+  async function advanceIssue(id){
+    const i=issues.find(x=>x.id===id); if(!i||i.status>=3)return;
+    const status=i.status+1;
+    const log=[...i.log, {when:'2026-06-12', txt:`Status zmieniony na: ${STATUS_STEPS[status]}`}];
+    const { error } = await sb.from('ld_issues').update({ status, log }).eq('id', id);
+    if(error){ console.error(error); toast('Nie udało się zapisać statusu'); return; }
+    i.status=status; i.log=log;
+    renderIssues(); renderHealth(); renderTabs(); renderAlerts(); toast('Status zaktualizowany');
+  }
+  async function closeIssue(id){
+    const i=issues.find(x=>x.id===id); if(!i)return;
+    const log=[...i.log, {when:'2026-06-12', txt:'Zgłoszenie zamknięte i rozliczone'}];
+    const { error } = await sb.from('ld_issues').update({ status:3, log }).eq('id', id);
+    if(error){ console.error(error); toast('Nie udało się zamknąć zgłoszenia'); return; }
+    i.status=3; i.log=log;
+    renderIssues(); renderHealth(); renderTabs(); renderAlerts(); toast('Zgłoszenie zamknięte');
+  }
+  async function reopenIssue(id){
+    const i=issues.find(x=>x.id===id); if(!i)return;
+    const log=[...i.log, {when:'2026-06-12', txt:'Otwarte ponownie'}];
+    const { error } = await sb.from('ld_issues').update({ status:2, log }).eq('id', id);
+    if(error){ console.error(error); toast('Nie udało się zapisać'); return; }
+    i.status=2; i.log=log;
+    renderIssues(); renderHealth(); renderTabs(); renderAlerts();
+  }
+  function openIssueModal(){ document.getElementById('issueModal').classList.add('open'); }
+  async function saveIssue(){
+    const title=document.getElementById('im-title').value.trim();
+    if(!title){toast('Podaj czego dotyczy zgłoszenie');return;}
+    const row={ title, descr:document.getElementById('im-desc').value.trim()||'(brak szczegółów)',
+      pri:document.getElementById('im-pri').value, status:0, created:'2026-06-12',
+      log:[{when:'2026-06-12', txt:'Zgłoszone — zarejestrowane przez wynajmującego'}] };
+    const { data, error } = await sb.from('ld_issues').insert(row).select().single();
+    if(error){ console.error(error); toast('Nie udało się zarejestrować zgłoszenia'); return; }
+    issues.push(rowToIssue(data));
+    closeModal('issueModal');
+    ['im-title','im-desc'].forEach(i=>document.getElementById(i).value='');
+    renderIssues(); renderHealth(); renderTabs(); renderAlerts(); toast('Zgłoszenie zarejestrowane');
+  }
 
-/* ---------- alerts ---------- */
-function computeAlerts(){
-  const a=[];
-  issues.filter(i=>i.status<3).forEach(i=>{
-    const age=daysBetween(i.created,TODAY);
-    a.push({ type:i.pri==='high'?'crit':'warn', icon:i.pri==='high'?'⚑':'△',
-      title:`Otwarte zgłoszenie: ${i.title}`, sub:`${STATUS_STEPS[i.status]} · ${age} dni od zgłoszenia`, when:`${age}d`, sort:age+100 });
-  });
-  tasks.filter(t=>!t.done).forEach(t=>{
-    const dd=daysBetween(TODAY,t.date);
-    if(dd<0) a.push({type:'crit',icon:'⏱',title:`Po terminie: ${t.title}`,sub:`Termin minął ${-dd} dni temu (${fmtPL(t.date)})`,when:`${-dd}d`,sort:-dd+200});
-    else if(dd<=45) a.push({type:'warn',icon:'❑',title:`Zbliża się: ${t.title}`,sub:`Termin za ${dd} dni — ${fmtPL(t.date)}`,when:`${dd}d`,sort:60-dd});
-  });
-  const dEnd=daysBetween(TODAY,'2026-10-31');
-  if(dEnd<=150) a.push({type:'info',icon:'§',title:'Umowa najmu kończy się 31.10.2026',sub:`Za ${dEnd} dni. Zacznij rozmowę o przedłużeniu/podwyżce z wyprzedzeniem.`,when:`${dEnd}d`,sort:30});
-  a.push({type:'info',icon:'↗',title:'Czynsz poniżej rynku okolicy',sub:'Twoje 2 000 zł vs. mediana ~3 350 zł. Potencjał +1 000–1 300 zł/mc przy odnowieniu.',when:'rynek',sort:20});
-  return a.sort((x,y)=>y.sort-x.sort);
-}
-function renderAlerts(){
-  const a=computeAlerts();
-  const el=document.getElementById('alertFeed');
-  if(!a.length){ el.innerHTML='<div class="empty">Brak alertów — wszystko pod kontrolą.</div>'; return; }
-  el.innerHTML = a.map(x=>`
+  /* ---------- alerts ---------- */
+  function computeAlerts(){
+    const a=[];
+    issues.filter(i=>i.status<3).forEach(i=>{
+      const age=daysBetween(i.created,TODAY);
+      a.push({ type:i.pri==='high'?'crit':'warn', icon:i.pri==='high'?'⚑':'△',
+        title:`Otwarte zgłoszenie: ${i.title}`, sub:`${STATUS_STEPS[i.status]} · ${age} dni od zgłoszenia`, when:`${age}d`, sort:age+100 });
+    });
+    tasks.filter(t=>!t.done).forEach(t=>{
+      const dd=daysBetween(TODAY,t.date);
+      if(dd<0) a.push({type:'crit',icon:'⏱',title:`Po terminie: ${t.title}`,sub:`Termin minął ${-dd} dni temu (${fmtPL(t.date)})`,when:`${-dd}d`,sort:-dd+200});
+      else if(dd<=45) a.push({type:'warn',icon:'❑',title:`Zbliża się: ${t.title}`,sub:`Termin za ${dd} dni — ${fmtPL(t.date)}`,when:`${dd}d`,sort:60-dd});
+    });
+    const dEnd=daysBetween(TODAY,'2026-10-31');
+    if(dEnd<=150) a.push({type:'info',icon:'§',title:'Umowa najmu kończy się 31.10.2026',sub:`Za ${dEnd} dni. Zacznij rozmowę o przedłużeniu/podwyżce z wyprzedzeniem.`,when:`${dEnd}d`,sort:30});
+    a.push({type:'info',icon:'↗',title:'Czynsz poniżej rynku okolicy',sub:'Twoje 2 000 zł vs. mediana ~3 350 zł. Potencjał +1 000–1 300 zł/mc przy odnowieniu.',when:'rynek',sort:20});
+    return a.sort((x,y)=>y.sort-x.sort);
+  }
+  function renderAlerts(){
+    const a=computeAlerts();
+    const el=document.getElementById('alertFeed');
+    if(!a.length){ el.innerHTML='<div class="empty">Brak alertów — wszystko pod kontrolą.</div>'; return; }
+    el.innerHTML = a.map(x=>`
     <div class="alert">
       <div class="alert-ic ai-${x.type}">${x.icon}</div>
       <div><div class="alert-t">${x.title}</div><div class="alert-s">${x.sub}</div></div>
       <div class="alert-w">${x.when}</div>
     </div>`).join('');
-  renderTabs();
-}
-
-/* ---------- utils ---------- */
-function closeModal(id){ document.getElementById(id).classList.remove('open'); }
-let toastTimer;
-function toast(msg){
-  const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show');
-  clearTimeout(toastTimer); toastTimer=setTimeout(()=>t.classList.remove('show'),2400);
-}
-document.querySelectorAll('.modal-bg').forEach(m=>m.addEventListener('click',e=>{ if(e.target===m) m.classList.remove('open'); }));
-document.addEventListener('keydown',e=>{ if(e.key==='Escape') document.querySelectorAll('.modal-bg.open').forEach(m=>m.classList.remove('open')); });
-
-/* ---------- auth + init ---------- */
-async function loadAndRender(){
-  await seedIfEmpty();
-  tasks  = await fetchTasks();
-  issues = await fetchIssues();
-  renderTabs(); renderHealth(); renderDashboard();
-  renderTaskFilters(); renderTasks();
-  renderIssueFilters(); renderIssues();
-  renderAlerts();
-}
-async function enterApp(){
-  document.body.classList.remove('locked');
-  await loadAndRender();
-}
-async function doAuth(mode){
-  const msg=document.getElementById('au-msg');
-  if(!sb){ msg.textContent='Nie udało się załadować biblioteki Supabase (sprawdź połączenie).'; return; }
-  const email=document.getElementById('au-email').value.trim();
-  const pass=document.getElementById('au-pass').value;
-  if(!email||!pass){ msg.textContent='Podaj e-mail i hasło.'; return; }
-  msg.textContent='Łączę…';
-  const res = mode==='signup'
-    ? await sb.auth.signUp({ email, password:pass })
-    : await sb.auth.signInWithPassword({ email, password:pass });
-  if(res.error){ msg.textContent=res.error.message; return; }
-  if(mode==='signup' && !res.data.session){
-    msg.textContent='Konto utworzone. Sprawdź skrzynkę i potwierdź rejestrację, a potem zaloguj się.'; return;
+    renderTabs();
   }
-  msg.textContent='';
-  enterApp();
-}
-async function signOut(){
-  if(sb) await sb.auth.signOut();
-  location.reload();
-}
-(async function(){
-  if(!sb){ document.getElementById('au-msg').textContent='Nie udało się załadować biblioteki Supabase (sprawdź połączenie).'; return; }
-  const { data:{ session } } = await sb.auth.getSession();
-  if(session) enterApp();
-})();
+
+  /* ---------- utils ---------- */
+  function closeModal(id){ document.getElementById(id).classList.remove('open'); }
+  let toastTimer;
+  function toast(msg){
+    const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show');
+    clearTimeout(toastTimer); toastTimer=setTimeout(()=>t.classList.remove('show'),2400);
+  }
+  document.querySelectorAll('.modal-bg').forEach(m=>m.addEventListener('click',e=>{ if(e.target===m) m.classList.remove('open'); }));
+  document.addEventListener('keydown',e=>{ if(e.key==='Escape') document.querySelectorAll('.modal-bg.open').forEach(m=>m.classList.remove('open')); });
+
+  /* ---------- auth + init ---------- */
+  async function loadAndRender(){
+    await seedIfEmpty();
+    tasks  = await fetchTasks();
+    issues = await fetchIssues();
+    renderTabs(); renderHealth(); renderDashboard();
+    renderTaskFilters(); renderTasks();
+    renderIssueFilters(); renderIssues();
+    renderAlerts();
+  }
+  async function enterApp(){
+    document.body.classList.remove('locked');
+    await loadAndRender();
+  }
+  async function doAuth(mode){
+    const msg=document.getElementById('au-msg');
+    if(!sb){ msg.textContent='Nie udało się załadować biblioteki Supabase (sprawdź połączenie).'; return; }
+    const email=document.getElementById('au-email').value.trim();
+    const pass=document.getElementById('au-pass').value;
+    if(!email||!pass){ msg.textContent='Podaj e-mail i hasło.'; return; }
+    msg.textContent='Łączę…';
+    const res = await sb.auth.signInWithPassword({ email, password:pass });
+    if(res.error){ msg.textContent=res.error.message; return; }
+    msg.textContent='';
+    enterApp();
+  }
+  async function signOut(){
+    if(sb) await sb.auth.signOut();
+    location.reload();
+  }
+  (async function(){
+    if(!sb){ document.getElementById('au-msg').textContent='Nie udało się załadować biblioteki Supabase (sprawdź połączenie).'; return; }
+    const { data:{ session } } = await sb.auth.getSession();
+    if(session) enterApp();
+  })();
 </script>
 </body>
 </html>
