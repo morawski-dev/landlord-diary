@@ -621,7 +621,7 @@
 <!-- Issue modal -->
 <div class="modal-bg" id="issueModal">
   <div class="modal">
-    <div class="m-eyebrow">Rejestracja usterki</div>
+    <div class="m-eyebrow" id="im-eyebrow">Rejestracja usterki</div>
     <h3>Nowe zgłoszenie</h3>
     <div class="field"><label>Czego dotyczy</label><input id="im-title" placeholder="np. Obniżone ciśnienie zimnej wody w łazience"></div>
     <div class="field"><label>Szczegóły od najemcy</label><textarea id="im-desc" rows="3" placeholder="Co zgłosił najemca, od kiedy, jak objawia się usterka"></textarea></div>
@@ -630,7 +630,20 @@
     </div>
     <div class="modal-foot">
       <button class="btn" onclick="closeModal('issueModal')">Anuluj</button>
-      <button class="btn primary" onclick="saveIssue()">Zarejestruj</button>
+      <button class="btn primary" id="im-submit" onclick="saveIssue()">Zarejestruj</button>
+    </div>
+  </div>
+</div>
+
+<!-- Note modal -->
+<div class="modal-bg" id="noteModal">
+  <div class="modal">
+    <div class="m-eyebrow">Oś czasu</div>
+    <h3>Dodaj notatkę</h3>
+    <div class="field"><label>Treść wpisu</label><textarea id="nm-text" rows="3" placeholder="np. Hydraulik umówiony na piątek; wymieniono perlator"></textarea></div>
+    <div class="modal-foot">
+      <button class="btn" onclick="closeModal('noteModal')">Anuluj</button>
+      <button class="btn primary" onclick="saveIssueNote()">Dodaj</button>
     </div>
   </div>
 </div>
@@ -639,6 +652,7 @@
 
 <script>
   const TODAY = new Date(new Date().toLocaleDateString('en-CA'));
+  const todayISO = () => new Date().toLocaleDateString('en-CA');
   const fmtPL = d => new Date(d).toLocaleDateString('pl-PL', { day:'numeric', month:'short', year:'numeric' });
   const daysBetween = (a,b) => Math.round((new Date(b)-new Date(a))/864e5);
 
@@ -985,6 +999,8 @@
       <div class="issue-foot">
         <span class="stat">${i.status===3?'Zakończone i rozliczone':`Status: ${STATUS_STEPS[i.status]}`}</span>
         <div class="issue-actions">
+          <button class="btn sm" onclick="openIssueModal(${i.id})">Edytuj</button>
+          <button class="btn sm" onclick="openNoteModal(${i.id})">+ Notatka</button>
           ${i.status<3?`<button class="btn sm" onclick="advanceIssue(${i.id})">Przesuń status →</button>`:''}
           ${i.status<3?`<button class="btn sm brass" onclick="closeIssue(${i.id})">Zamknij</button>`:`<button class="btn sm" onclick="reopenIssue(${i.id})">Otwórz ponownie</button>`}
         </div>
@@ -995,7 +1011,7 @@
   async function advanceIssue(id){
     const i=issues.find(x=>x.id===id); if(!i||i.status>=3)return;
     const status=i.status+1;
-    const log=[...i.log, {when:'2026-06-12', txt:`Status zmieniony na: ${STATUS_STEPS[status]}`}];
+    const log=[...i.log, {when:todayISO(), txt:`Status zmieniony na: ${STATUS_STEPS[status]}`}];
     const { error } = await sb.from('ld_issues').update({ status, log }).eq('id', id);
     if(error){ console.error(error); toast('Nie udało się zapisać statusu'); return; }
     i.status=status; i.log=log;
@@ -1003,7 +1019,7 @@
   }
   async function closeIssue(id){
     const i=issues.find(x=>x.id===id); if(!i)return;
-    const log=[...i.log, {when:'2026-06-12', txt:'Zgłoszenie zamknięte i rozliczone'}];
+    const log=[...i.log, {when:todayISO(), txt:'Zgłoszenie zamknięte i rozliczone'}];
     const { error } = await sb.from('ld_issues').update({ status:3, log }).eq('id', id);
     if(error){ console.error(error); toast('Nie udało się zamknąć zgłoszenia'); return; }
     i.status=3; i.log=log;
@@ -1011,25 +1027,62 @@
   }
   async function reopenIssue(id){
     const i=issues.find(x=>x.id===id); if(!i)return;
-    const log=[...i.log, {when:'2026-06-12', txt:'Otwarte ponownie'}];
+    const log=[...i.log, {when:todayISO(), txt:'Otwarte ponownie'}];
     const { error } = await sb.from('ld_issues').update({ status:2, log }).eq('id', id);
     if(error){ console.error(error); toast('Nie udało się zapisać'); return; }
     i.status=2; i.log=log;
     renderIssues(); renderHealth(); renderTabs(); renderAlerts();
   }
-  function openIssueModal(){ document.getElementById('issueModal').classList.add('open'); }
+  let issueModalEditId=null;
+  function openIssueModal(id){
+    const it = id!=null ? issues.find(x=>x.id===id) : null;
+    issueModalEditId = it ? it.id : null;
+    document.getElementById('im-title').value = it ? it.title : '';
+    document.getElementById('im-desc').value  = it ? it.desc  : '';
+    document.getElementById('im-pri').value   = it ? it.pri   : 'med';
+    document.getElementById('im-eyebrow').textContent = it ? 'Edycja zgłoszenia' : 'Rejestracja usterki';
+    document.getElementById('im-submit').textContent  = it ? 'Zapisz' : 'Zarejestruj';
+    document.getElementById('issueModal').classList.add('open');
+  }
   async function saveIssue(){
     const title=document.getElementById('im-title').value.trim();
     if(!title){toast('Podaj czego dotyczy zgłoszenie');return;}
-    const row={ title, descr:document.getElementById('im-desc').value.trim()||'(brak szczegółów)',
-      pri:document.getElementById('im-pri').value, status:0, created:'2026-06-12',
-      log:[{when:'2026-06-12', txt:'Zgłoszone — zarejestrowane przez wynajmującego'}] };
-    const { data, error } = await sb.from('ld_issues').insert(row).select().single();
-    if(error){ console.error(error); toast('Nie udało się zarejestrować zgłoszenia'); return; }
-    issues.push(rowToIssue(data));
-    closeModal('issueModal');
-    ['im-title','im-desc'].forEach(i=>document.getElementById(i).value='');
-    renderIssues(); renderHealth(); renderTabs(); renderAlerts(); toast('Zgłoszenie zarejestrowane');
+    const fields={ title, descr:document.getElementById('im-desc').value.trim()||'(brak szczegółów)',
+      pri:document.getElementById('im-pri').value };
+    if(issueModalEditId!=null){
+      const { data, error } = await sb.from('ld_issues').update(fields).eq('id', issueModalEditId).select().single();
+      if(error){ console.error(error); toast('Nie udało się zapisać zmiany'); return; }
+      const i=issues.findIndex(x=>x.id===issueModalEditId);
+      if(i>-1) issues[i]=rowToIssue(data);
+      closeModal('issueModal');
+      renderIssues(); renderHealth(); renderTabs(); renderAlerts(); toast('Zgłoszenie zaktualizowane');
+    } else {
+      const row={ ...fields, status:0, created:todayISO(),
+        log:[{when:todayISO(), txt:'Zgłoszone — zarejestrowane przez wynajmującego'}] };
+      const { data, error } = await sb.from('ld_issues').insert(row).select().single();
+      if(error){ console.error(error); toast('Nie udało się zarejestrować zgłoszenia'); return; }
+      issues.push(rowToIssue(data));
+      closeModal('issueModal');
+      renderIssues(); renderHealth(); renderTabs(); renderAlerts(); toast('Zgłoszenie zarejestrowane');
+    }
+  }
+  /* free-text note appended to an issue's timeline */
+  let noteIssueId=null;
+  function openNoteModal(id){
+    noteIssueId=id;
+    document.getElementById('nm-text').value='';
+    document.getElementById('noteModal').classList.add('open');
+  }
+  async function saveIssueNote(){
+    const txt=document.getElementById('nm-text').value.trim();
+    if(!txt){toast('Wpisz treść notatki');return;}
+    const it=issues.find(x=>x.id===noteIssueId); if(!it){closeModal('noteModal');return;}
+    const log=[...it.log, {when:todayISO(), txt}];
+    const { error } = await sb.from('ld_issues').update({ log }).eq('id', noteIssueId).select().single();
+    if(error){ console.error(error); toast('Nie udało się dodać notatki'); return; }
+    it.log=log;
+    closeModal('noteModal');
+    renderIssues(); toast('Notatka dodana');
   }
 
   /* ---------- alerts ---------- */
