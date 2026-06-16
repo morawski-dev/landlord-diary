@@ -311,6 +311,12 @@
     .task-desc { font-size: 13px; color: var(--ink-soft); margin-top: 4px; line-height: 1.5; }
     .task-meta { display: flex; gap: 8px; align-items: center; margin-top: 10px; flex-wrap: wrap; }
     .task-date { font-family: var(--mono); font-size: 11.5px; color: var(--ink-faint); text-align: right; min-width: 96px; letter-spacing: -.02em; }
+    .task-hist { font-family: var(--mono); font-size: 11px; color: var(--ink-faint); margin-top: 8px; letter-spacing: -.01em; }
+    .task-edit {
+      font-family: var(--mono); font-size: 10.5px; letter-spacing: .03em; color: var(--ink-faint);
+      background: none; border: none; padding: 3px 4px; margin-left: auto; cursor: pointer; transition: color .14s;
+    }
+    .task-edit:hover { color: var(--gold); }
 
     .pill { font-family: var(--mono); font-size: 10.5px; letter-spacing: .03em; padding: 3px 9px; border-radius: 2px; font-weight: 500; white-space: nowrap; }
     .pill.cat,
@@ -320,6 +326,7 @@
     .pill.fin       { background: rgba(147,177,134,.15); color: #b1cf9f; }
     .pill.due-soon  { background: rgba(224,166,78,.15);  color: #ecbc6a; }
     .pill.overdue   { background: rgba(210,115,85,.16);  color: #e89b80; }
+    .pill.recur     { background: rgba(199,164,93,.14);  color: var(--gold); }
 
     /* ---------- Issues ---------- */
     .issue { padding: 22px 24px; margin-bottom: 16px; }
@@ -593,17 +600,20 @@
 <!-- Task modal -->
 <div class="modal-bg" id="taskModal">
   <div class="modal">
-    <div class="m-eyebrow">Nowy wpis</div>
+    <div class="m-eyebrow" id="tm-eyebrow">Nowy wpis</div>
     <h3>Zadanie cykliczne</h3>
     <div class="field"><label>Nazwa</label><input id="tm-title" placeholder="np. Przegląd szczelności instalacji gazowej"></div>
     <div class="field"><label>Opis (opcjonalnie)</label><input id="tm-desc" placeholder="Co dokładnie zrobić"></div>
     <div class="field"><label>Kategoria</label>
       <select id="tm-cat"><option value="tech">Techniczne / instalacje</option><option value="legal">Prawne / umowne</option><option value="fin">Finanse / podatki</option></select>
     </div>
+    <div class="field"><label>Powtarzalność</label>
+      <select id="tm-freq"><option value="none">Jednorazowo</option><option value="1m">Co miesiąc</option><option value="1y">Co rok</option><option value="5y">Co 5 lat</option></select>
+    </div>
     <div class="field"><label>Termin</label><input type="date" id="tm-date"></div>
     <div class="modal-foot">
       <button class="btn" onclick="closeModal('taskModal')">Anuluj</button>
-      <button class="btn primary" onclick="saveTask()">Dodaj</button>
+      <button class="btn primary" id="tm-submit" onclick="saveTask()">Dodaj</button>
     </div>
   </div>
 </div>
@@ -640,7 +650,7 @@
           : null;
 
   /* row <-> app-object mapping (DB column `descr` <-> app field `desc`) */
-  const rowToTask  = r => ({ id:r.id, title:r.title, desc:r.descr||'', cat:r.cat, date:r.date, done:r.done });
+  const rowToTask  = r => ({ id:r.id, title:r.title, desc:r.descr||'', cat:r.cat, date:r.date, done:r.done, freqN:r.freq_n, freqUnit:r.freq_unit, log:r.log||[] });
   const rowToIssue = r => ({ id:r.id, title:r.title, desc:r.descr||'', pri:r.pri, status:r.status, created:r.created, log:r.log||[] });
 
   async function fetchTasks() {
@@ -657,7 +667,7 @@
   async function seedIfEmpty() {
     const { count:tc } = await sb.from('ld_tasks').select('id', { count:'exact', head:true });
     if (tc === 0) {
-      await sb.from('ld_tasks').insert(seedTasks().map(t=>({ title:t.title, descr:t.desc, cat:t.cat, date:t.date, done:t.done })));
+      await sb.from('ld_tasks').insert(seedTasks().map(t=>({ title:t.title, descr:t.desc, cat:t.cat, date:t.date, done:t.done, freq_n:t.freqN, freq_unit:t.freqUnit })));
     }
     const { count:ic } = await sb.from('ld_issues').select('id', { count:'exact', head:true });
     if (ic === 0) {
@@ -668,16 +678,16 @@
   /* ---------- seed data ---------- */
   function seedTasks() {
     return [
-      { id:1, title:'Przegląd szczelności instalacji gazowej', desc:'Obowiązkowa coroczna kontrola — kuchenka gazowa. Wymagane uprawnienia gazowe.', cat:'tech', date:'2026-09-15', done:false },
-      { id:2, title:'Przegląd przewodów kominowych / wentylacyjnych', desc:'Coroczna kontrola wentylacji (kominiarz) — szczególnie przy gazie.', cat:'tech', date:'2026-09-15', done:false },
-      { id:3, title:'Okresowa kontrola instalacji elektrycznej (5 lat)', desc:'Badanie instalacji i odgromowej — co 5 lat. Sprawdź datę ostatniego protokołu.', cat:'tech', date:'2026-11-30', done:false },
-      { id:4, title:'Wymiana / sprawdzenie czujnika czadu i dymu', desc:'Sprawdź baterię i datę ważności czujnika tlenku węgla (przy gazie — krytyczne).', cat:'tech', date:'2026-10-01', done:false },
-      { id:5, title:'Decyzja: przedłużyć umowę czy renegocjować', desc:'Umowa kończy się 31.10. Zacznij rozmowę z najemcą ~2 mies. wcześniej. Rozważ podniesienie czynszu do rynku.', cat:'legal', date:'2026-08-31', done:false },
-      { id:6, title:'Rozliczenie roczne PIT — najem (ryczałt)', desc:'PIT-28 za 2026 r. składany do końca lutego 2027. Zbierz dowody wpłat ryczałtu.', cat:'fin', date:'2027-02-28', done:false },
-      { id:7, title:'Przegląd stawki czynszu vs. rynek', desc:'Sprawdź aktualne oferty najmu w okolicy Ronda ONZ. Twój czynsz jest wyraźnie poniżej rynku.', cat:'fin', date:'2026-07-15', done:false },
-      { id:8, title:'Aktualizacja zaliczek na media', desc:'Sprawdź, czy 650 zł na media (spółdzielnia 500 + gaz 50 + prąd 100) pokrywa realne zużycie.', cat:'fin', date:'2026-12-15', done:false },
-      { id:9, title:'Przegląd polisy ubezpieczenia mieszkania', desc:'Odnowienie OC i ubezpieczenia lokalu pod wynajem. Sprawdź zakres dla najmu.', cat:'legal', date:'2026-10-20', done:false },
-      { id:10, title:'Serwis / odkamienianie sprzętu AGD', desc:'Pralka, piekarnik — przegląd stanu. Kontrola uszczelek, filtrów, kamienia.', cat:'tech', date:'2027-01-15', done:false },
+      { id:1, title:'Przegląd szczelności instalacji gazowej', desc:'Obowiązkowa coroczna kontrola — kuchenka gazowa. Wymagane uprawnienia gazowe.', cat:'tech', date:'2026-09-15', done:false, freqN:1, freqUnit:'year' },
+      { id:2, title:'Przegląd przewodów kominowych / wentylacyjnych', desc:'Coroczna kontrola wentylacji (kominiarz) — szczególnie przy gazie.', cat:'tech', date:'2026-09-15', done:false, freqN:1, freqUnit:'year' },
+      { id:3, title:'Okresowa kontrola instalacji elektrycznej (5 lat)', desc:'Badanie instalacji i odgromowej — co 5 lat. Sprawdź datę ostatniego protokołu.', cat:'tech', date:'2026-11-30', done:false, freqN:5, freqUnit:'year' },
+      { id:4, title:'Wymiana / sprawdzenie czujnika czadu i dymu', desc:'Sprawdź baterię i datę ważności czujnika tlenku węgla (przy gazie — krytyczne).', cat:'tech', date:'2026-10-01', done:false, freqN:1, freqUnit:'year' },
+      { id:5, title:'Decyzja: przedłużyć umowę czy renegocjować', desc:'Umowa kończy się 31.10. Zacznij rozmowę z najemcą ~2 mies. wcześniej. Rozważ podniesienie czynszu do rynku.', cat:'legal', date:'2026-08-31', done:false, freqN:null, freqUnit:null },
+      { id:6, title:'Rozliczenie roczne PIT — najem (ryczałt)', desc:'PIT-28 za 2026 r. składany do końca lutego 2027. Zbierz dowody wpłat ryczałtu.', cat:'fin', date:'2027-02-28', done:false, freqN:1, freqUnit:'year' },
+      { id:7, title:'Przegląd stawki czynszu vs. rynek', desc:'Sprawdź aktualne oferty najmu w okolicy Ronda ONZ. Twój czynsz jest wyraźnie poniżej rynku.', cat:'fin', date:'2026-07-15', done:false, freqN:1, freqUnit:'year' },
+      { id:8, title:'Aktualizacja zaliczek na media', desc:'Sprawdź, czy 650 zł na media (spółdzielnia 500 + gaz 50 + prąd 100) pokrywa realne zużycie.', cat:'fin', date:'2026-12-15', done:false, freqN:1, freqUnit:'year' },
+      { id:9, title:'Przegląd polisy ubezpieczenia mieszkania', desc:'Odnowienie OC i ubezpieczenia lokalu pod wynajem. Sprawdź zakres dla najmu.', cat:'legal', date:'2026-10-20', done:false, freqN:1, freqUnit:'year' },
+      { id:10, title:'Serwis / odkamienianie sprzętu AGD', desc:'Pralka, piekarnik — przegląd stanu. Kontrola uszczelek, filtrów, kamienia.', cat:'tech', date:'2027-01-15', done:false, freqN:1, freqUnit:'year' },
     ];
   }
   function seedIssues() {
@@ -815,6 +825,34 @@
 
   /* ---------- tasks ---------- */
   const CAT_LABEL = { tech:'Instalacje', legal:'Prawne', fin:'Finanse' };
+  /* recurrence helpers */
+  function freqLabel(t){
+    if(!t.freqUnit) return '';
+    const n=t.freqN||1;
+    if(t.freqUnit==='month') return n===1 ? 'co miesiąc' : `co ${n} mies.`;
+    return n===1 ? 'co rok' : `co ${n} lat`;
+  }
+  /* advance a YYYY-MM-DD date by n months/years.
+     anchorDay = original day-of-month (so a clamped 31→28 climbs back to 31 in months that have it);
+     the day is clamped only to the target month's last day. */
+  function addInterval(dateStr, n, unit, anchorDay){
+    const d=new Date(dateStr);
+    let y=d.getUTCFullYear(), m=d.getUTCMonth();
+    const day=anchorDay || d.getUTCDate();
+    if(unit==='year'){ y+=n; }
+    else { m+=n; y+=Math.floor(m/12); m=((m%12)+12)%12; }
+    const dim=new Date(Date.UTC(y, m+1, 0)).getUTCDate();
+    const dd=Math.min(day, dim);
+    return `${y}-${String(m+1).padStart(2,'0')}-${String(dd).padStart(2,'0')}`;
+  }
+  function historyLine(t){
+    if(!t.log || !t.log.length) return '';
+    const recent=t.log.slice(-4);
+    const months=recent.map(e=> new Date(e.when).toLocaleDateString('pl-PL',{month:'short'}));
+    const lastYear=new Date(recent[recent.length-1].when).getFullYear();
+    const more=t.log.length>4 ? '… ' : '';
+    return `<div class="task-hist">Wykonane: ${more}${months.join(', ')} ${lastYear}</div>`;
+  }
   function renderTaskFilters() {
     const fs = [['all','Wszystkie'],['tech','Instalacje'],['legal','Prawne'],['fin','Finanse'],['todo','Do zrobienia']];
     document.getElementById('taskFilters').innerHTML = fs.map(([k,l])=>
@@ -835,12 +873,14 @@
         else if(dd<=45) datePill=`<span class="pill due-soon">za ${dd} dni</span>`;
         else datePill=`<span class="pill ok">${dd} dni</span>`;
       }
+      const recurPill = t.freqUnit ? `<span class="pill recur">↻ ${freqLabel(t)}</span>` : '';
       return `<div class="task ${t.done?'done':''}" onclick="toggleTask(${t.id})">
       <div class="check"><svg viewBox="0 0 24 24" fill="none" stroke-width="3.2"><polyline points="20 6 9 17 4 12"/></svg></div>
       <div class="task-body">
         <div class="task-title">${t.title}</div>
         <div class="task-desc">${t.desc}</div>
-        <div class="task-meta"><span class="pill cat ${t.cat}">${CAT_LABEL[t.cat]}</span>${datePill}</div>
+        ${historyLine(t)}
+        <div class="task-meta"><span class="pill cat ${t.cat}">${CAT_LABEL[t.cat]}</span>${recurPill}${datePill}<button class="task-edit" onclick="event.stopPropagation(); openTaskModal(${t.id})">edytuj</button></div>
       </div>
       <div class="task-date">${fmtPL(t.date)}</div>
     </div>`;
@@ -848,25 +888,67 @@
   }
   async function toggleTask(id){
     const t=tasks.find(x=>x.id===id); if(!t)return;
+    /* recurring task: log the completion, jump the due date to the next cycle, stay "to do" */
+    if(!t.done && t.freqUnit){
+      const entry={ when:new Date().toLocaleDateString('en-CA'), date:t.date };
+      /* anchor day = day-of-month of the first occurrence (log[0]), so a clamped day climbs back */
+      const anchorDay=(t.log && t.log.length) ? new Date(t.log[0].date).getUTCDate() : new Date(t.date).getUTCDate();
+      const nextDate=addInterval(t.date, t.freqN||1, t.freqUnit, anchorDay);
+      const newLog=[...(t.log||[]), entry];
+      const { error } = await sb.from('ld_tasks').update({ date:nextDate, done:false, log:newLog }).eq('id', id);
+      if(error){ console.error(error); toast('Nie udało się zapisać zmiany'); return; }
+      t.date=nextDate; t.log=newLog; t.done=false;
+      renderTasks(); renderHealth(); renderTabs(); renderAlerts();
+      toast('Odhaczone — następny termin: '+fmtPL(nextDate));
+      return;
+    }
+    /* one-time task: original toggle behaviour */
     const next=!t.done;
     const { error } = await sb.from('ld_tasks').update({ done:next }).eq('id', id);
     if(error){ console.error(error); toast('Nie udało się zapisać zmiany'); return; }
     t.done=next;
     renderTasks(); renderHealth(); renderTabs(); renderAlerts();
-    if(t.done) toast('Odhaczone — wróci w kolejnym cyklu');
+    if(t.done) toast('Odhaczone — zadanie wykonane');
   }
-  function openTaskModal(){ document.getElementById('tm-date').value=new Date().toLocaleDateString('en-CA'); document.getElementById('taskModal').classList.add('open'); }
+  let taskModalEditId=null;
+  const freqToValue=(n,unit)=> !unit ? 'none' : `${n||1}${unit==='month'?'m':'y'}`;
+  function parseFreq(v){
+    if(!v || v==='none') return { freq_n:null, freq_unit:null };
+    return { freq_n:parseInt(v,10), freq_unit:v.endsWith('m')?'month':'year' };
+  }
+  function openTaskModal(id){
+    const t = id!=null ? tasks.find(x=>x.id===id) : null;
+    taskModalEditId = t ? t.id : null;
+    document.getElementById('tm-title').value = t ? t.title : '';
+    document.getElementById('tm-desc').value  = t ? t.desc  : '';
+    document.getElementById('tm-cat').value   = t ? t.cat   : 'tech';
+    document.getElementById('tm-freq').value  = t ? freqToValue(t.freqN, t.freqUnit) : '1m';
+    document.getElementById('tm-date').value  = t ? t.date  : new Date().toLocaleDateString('en-CA');
+    document.getElementById('tm-eyebrow').textContent = t ? 'Edycja zadania' : 'Nowy wpis';
+    document.getElementById('tm-submit').textContent  = t ? 'Zapisz' : 'Dodaj';
+    document.getElementById('taskModal').classList.add('open');
+  }
   async function saveTask(){
     const title=document.getElementById('tm-title').value.trim();
     if(!title){toast('Podaj nazwę zadania');return;}
-    const row={ title, descr:document.getElementById('tm-desc').value.trim(),
-      cat:document.getElementById('tm-cat').value, date:document.getElementById('tm-date').value||'2026-12-01', done:false };
-    const { data, error } = await sb.from('ld_tasks').insert(row).select().single();
-    if(error){ console.error(error); toast('Nie udało się dodać zadania'); return; }
-    tasks.push(rowToTask(data));
-    closeModal('taskModal');
-    ['tm-title','tm-desc'].forEach(i=>document.getElementById(i).value='');
-    renderTasks(); renderHealth(); renderAlerts(); renderTabs(); toast('Zadanie dodane');
+    const freq=parseFreq(document.getElementById('tm-freq').value);
+    const fields={ title, descr:document.getElementById('tm-desc').value.trim(),
+      cat:document.getElementById('tm-cat').value, date:document.getElementById('tm-date').value||'2026-12-01',
+      freq_n:freq.freq_n, freq_unit:freq.freq_unit };
+    if(taskModalEditId!=null){
+      const { data, error } = await sb.from('ld_tasks').update(fields).eq('id', taskModalEditId).select().single();
+      if(error){ console.error(error); toast('Nie udało się zapisać zmiany'); return; }
+      const i=tasks.findIndex(x=>x.id===taskModalEditId);
+      if(i>-1) tasks[i]=rowToTask(data);
+      closeModal('taskModal');
+      renderTasks(); renderHealth(); renderAlerts(); renderTabs(); toast('Zadanie zaktualizowane');
+    } else {
+      const { data, error } = await sb.from('ld_tasks').insert({ ...fields, done:false }).select().single();
+      if(error){ console.error(error); toast('Nie udało się dodać zadania'); return; }
+      tasks.push(rowToTask(data));
+      closeModal('taskModal');
+      renderTasks(); renderHealth(); renderAlerts(); renderTabs(); toast('Zadanie dodane');
+    }
   }
 
   /* ---------- issues ---------- */
