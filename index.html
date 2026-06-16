@@ -628,7 +628,7 @@
 <div class="toast" id="toast"></div>
 
 <script>
-  const TODAY = new Date('2026-06-12');
+  const TODAY = new Date(new Date().toLocaleDateString('en-CA'));
   const fmtPL = d => new Date(d).toLocaleDateString('pl-PL', { day:'numeric', month:'short', year:'numeric' });
   const daysBetween = (a,b) => Math.round((new Date(b)-new Date(a))/864e5);
 
@@ -855,7 +855,7 @@
     renderTasks(); renderHealth(); renderTabs(); renderAlerts();
     if(t.done) toast('Odhaczone — wróci w kolejnym cyklu');
   }
-  function openTaskModal(){ document.getElementById('tm-date').value='2026-12-01'; document.getElementById('taskModal').classList.add('open'); }
+  function openTaskModal(){ document.getElementById('tm-date').value=new Date().toLocaleDateString('en-CA'); document.getElementById('taskModal').classList.add('open'); }
   async function saveTask(){
     const title=document.getElementById('tm-title').value.trim();
     if(!title){toast('Podaj nazwę zadania');return;}
