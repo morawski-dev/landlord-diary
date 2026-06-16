@@ -360,11 +360,14 @@
     input, textarea, select {
       font-family: var(--sans); font-size: 13.5px; padding: 10px 13px; border: 1px solid var(--line-2);
       border-radius: 3px; background: rgba(0,0,0,.2); color: var(--ink); width: 100%;
+      color-scheme: dark;
     }
     textarea { resize: vertical; }
     input::placeholder, textarea::placeholder { color: var(--ink-faint); }
     input:focus, textarea:focus, select:focus { outline: none; border-color: var(--gold); box-shadow: 0 0 0 3px var(--gold-glow); }
-    select { appearance: none; cursor: pointer; }
+    select { appearance: none; cursor: pointer; background-color: var(--panel-2); }
+    select option { background: var(--panel-2); color: var(--ink); }
+    select option:checked { background: var(--panel-hi); color: var(--gold); }
 
     /* ---------- Alerts ---------- */
     .alert {
