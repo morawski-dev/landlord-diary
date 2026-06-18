@@ -112,6 +112,15 @@
     .mm-row:last-child { border-bottom: none; }
     .mm-row b { font-family: var(--mono); font-weight: 500; color: var(--ink); font-size: 12.5px; letter-spacing: -.01em; }
     .mm-row .accent { color: var(--gold); }
+    .mm-date-edit { cursor: pointer; border-bottom: 1px dashed var(--line-2); }
+    .mm-date-edit:hover { border-bottom-color: var(--gold); }
+    .mm-date-input {
+      display: none; font-family: var(--mono); font-size: 12.5px;
+      background: var(--panel); color: var(--ink);
+      border: 1px solid var(--gold); border-radius: 3px; padding: 1px 4px;
+      color-scheme: dark;
+    }
+    .mm-date-input.open { display: inline-block; }
 
     /* health strip */
     .health-strip {
@@ -490,7 +499,7 @@
         <p class="mast-sub">27 m² · 4. piętro · Rondo ONZ, Śródmieście Północne · naprzeciw Atrium Plaza</p>
       </div>
       <div class="mast-meta">
-        <div class="mm-row"><span>Najemca do</span><b class="accent">31.10.2026</b></div>
+        <div class="mm-row"><span>Najemca do</span><b class="accent mm-date-edit" id="tenantUntilVal" title="Kliknij, aby zmienić datę" onclick="editTenantUntil()">31.10.2026</b><input type="date" id="tenantUntilInput" class="mm-date-input" onchange="setTenantUntil(this.value)" onblur="this.classList.remove('open')"></div>
         <div class="mm-row"><span>Czynsz najmu</span><b>2 000 zł <span style="color:var(--ink-faint)">+ media</span></b></div>
         <div class="mm-row"><span>Ryczałt</span><b>8,5%</b></div>
         <div class="mm-row"><span>Na rękę</span><b class="accent">1 830 zł/mc</b></div>
@@ -655,6 +664,33 @@
   const todayISO = () => new Date().toLocaleDateString('en-CA');
   const fmtPL = d => new Date(d).toLocaleDateString('pl-PL', { day:'numeric', month:'short', year:'numeric' });
   const daysBetween = (a,b) => Math.round((new Date(b)-new Date(a))/864e5);
+  /* DD.MM.YYYY from an ISO (YYYY-MM-DD) string, no timezone shift */
+  const fmtDot = iso => { const [y,m,d]=iso.split('-'); return `${d}.${m}.${y}`; };
+
+  /* ---------- "Najemca do" (tenant-until) date — persisted in localStorage ---------- */
+  const TENANT_UNTIL_KEY = 'ld_tenant_until';
+  const tenantUntilDefault = '2026-10-31';
+  function getTenantUntil(){ return localStorage.getItem(TENANT_UNTIL_KEY) || tenantUntilDefault; }
+  function renderTenantUntil(){
+    const el=document.getElementById('tenantUntilVal');
+    if(el) el.textContent=fmtDot(getTenantUntil());
+  }
+  function editTenantUntil(){
+    const inp=document.getElementById('tenantUntilInput');
+    if(!inp) return;
+    inp.value=getTenantUntil();
+    inp.classList.add('open');
+    if(inp.showPicker){ try{ inp.showPicker(); }catch(e){ inp.focus(); } } else { inp.focus(); }
+  }
+  function setTenantUntil(iso){
+    const inp=document.getElementById('tenantUntilInput');
+    if(inp) inp.classList.remove('open');
+    if(!iso) return;
+    localStorage.setItem(TENANT_UNTIL_KEY, iso);
+    renderTenantUntil();
+    renderAlerts();
+    toast('Zapisano datę zakończenia najmu');
+  }
 
   /* ---------- backend (Supabase: Auth + Postgres + RLS) ---------- */
   const SUPA_URL = 'https://kjvihylbtyzcvtfjtfhq.supabase.co';
@@ -1098,14 +1134,16 @@
       if(dd<0) a.push({type:'crit',icon:'⏱',title:`Po terminie: ${t.title}`,sub:`Termin minął ${-dd} dni temu (${fmtPL(t.date)})`,when:`${-dd}d`,sort:-dd+200});
       else if(dd<=45) a.push({type:'warn',icon:'❑',title:`Zbliża się: ${t.title}`,sub:`Termin za ${dd} dni — ${fmtPL(t.date)}`,when:`${dd}d`,sort:60-dd});
     });
-    const dEnd=daysBetween(TODAY,'2026-10-31');
-    if(dEnd<=150) a.push({type:'info',icon:'§',title:'Umowa najmu kończy się 31.10.2026',sub:`Za ${dEnd} dni. Zacznij rozmowę o przedłużeniu/podwyżce z wyprzedzeniem.`,when:`${dEnd}d`,sort:30});
+    const tenantUntilISO=getTenantUntil();
+    const dEnd=daysBetween(TODAY,tenantUntilISO);
+    if(dEnd<=150) a.push({type:'info',icon:'§',title:`Umowa najmu kończy się ${fmtDot(tenantUntilISO)}`,sub:`Za ${dEnd} dni. Zacznij rozmowę o przedłużeniu/podwyżce z wyprzedzeniem.`,when:`${dEnd}d`,sort:30});
     a.push({type:'info',icon:'↗',title:'Czynsz poniżej rynku okolicy',sub:'Twoje 2 000 zł vs. mediana ~3 350 zł. Potencjał +1 000–1 300 zł/mc przy odnowieniu.',when:'rynek',sort:20});
     return a.sort((x,y)=>y.sort-x.sort);
   }
   function renderAlerts(){
-    const a=computeAlerts();
     const el=document.getElementById('alertFeed');
+    if(!el) return;
+    const a=computeAlerts();
     if(!a.length){ el.innerHTML='<div class="empty">Brak alertów — wszystko pod kontrolą.</div>'; return; }
     el.innerHTML = a.map(x=>`
     <div class="alert">
@@ -1157,6 +1195,7 @@
     location.reload();
   }
   (async function(){
+    renderTenantUntil();
     if(!sb){ document.getElementById('au-msg').textContent='Nie udało się załadować biblioteki Supabase (sprawdź połączenie).'; return; }
     const { data:{ session } } = await sb.auth.getSession();
     if(session) enterApp();
