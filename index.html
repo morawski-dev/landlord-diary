@@ -122,6 +122,16 @@
     }
     .mm-date-input.open { display: inline-block; }
 
+    /* generyczna edycja inline pól profilu */
+    .editable { cursor: pointer; border-bottom: 1px dashed var(--line-2); transition: border-color .15s, color .15s; }
+    .editable:hover { border-bottom-color: var(--gold); color: var(--ink); }
+    .inline-input {
+      font-family: var(--mono); font-size: inherit; line-height: 1.2; max-width: 100%;
+      background: var(--panel); color: var(--ink);
+      border: 1px solid var(--gold); border-radius: 3px; padding: 1px 4px;
+      color-scheme: dark; vertical-align: baseline;
+    }
+
     /* health strip */
     .health-strip {
       display: grid; grid-template-columns: repeat(5, 1fr);
@@ -505,17 +515,17 @@
   <div class="wrap">
     <div class="mast-top">
       <div class="folio">Dziennik Wynajmującego &nbsp;·&nbsp; <b>№ 01</b></div>
-      <div class="mast-top-right"><span id="mastAsOf"></span><button class="signout" onclick="signOut()">Wyloguj</button></div>
+      <div class="mast-top-right"><span id="mastAsOf" class="editable" data-field="as_of_date" data-kind="date" title="Kliknij, aby zmienić datę" onclick="editField(this)"></span><button class="signout" onclick="signOut()">Wyloguj</button></div>
     </div>
     <div class="mast-main">
       <div class="mast-title">
-        <h1 id="mastTitle">Kawalerka<span class="dot">/</span></h1>
-        <p class="mast-sub" id="mastSub"></p>
+        <h1 id="mastTitle">Lokal<span class="dot">/</span><span id="mastAddr" class="editable" data-field="address_label" data-kind="text" title="Kliknij, aby edytować" onclick="editField(this)"></span></h1>
+        <p class="mast-sub editable" id="mastSub" data-field="location_note" data-kind="text" title="Kliknij, aby edytować" onclick="editField(this)"></p>
       </div>
       <div class="mast-meta">
         <div class="mm-row"><span>Najemca do</span><b class="accent mm-date-edit" id="tenantUntilVal" title="Kliknij, aby zmienić datę" onclick="editTenantUntil()"></b><input type="date" id="tenantUntilInput" class="mm-date-input" onchange="setTenantUntil(this.value)" onblur="this.classList.remove('open')"></div>
-        <div class="mm-row"><span>Czynsz najmu</span><b><span id="rentCzynsz"></span> zł <span style="color:var(--ink-faint)">+ media</span></b></div>
-        <div class="mm-row"><span>Ryczałt</span><b><span id="rentRyczalt"></span></b></div>
+        <div class="mm-row"><span>Czynsz najmu</span><b><span id="rentCzynsz" class="editable" data-field="rent" data-kind="money" title="Kliknij, aby edytować" onclick="editField(this)"></span> zł <span style="color:var(--ink-faint)">+ media</span></b></div>
+        <div class="mm-row"><span>Ryczałt</span><b><span id="rentRyczalt" class="editable" data-field="tax_rate" data-kind="pct" title="Kliknij, aby edytować" onclick="editField(this)"></span></b></div>
         <div class="mm-row"><span>Na rękę</span><b class="accent"><span id="rentNet"></span></b></div>
       </div>
     </div>
@@ -549,11 +559,11 @@
         <div class="panel-h">Czynsz vs. okolica</div>
         <div class="bench">
           <div class="gauge">
-            <div class="gauge-v"><span id="gaugeRent"></span><span class="unit"> zł</span> <span class="pct" id="gapPct"></span></div>
+            <div class="gauge-v"><span id="gaugeRent" class="editable" data-field="rent" data-kind="money" title="Kliknij, aby edytować" onclick="editField(this)"></span><span class="unit"> zł</span> <span class="pct" id="gapPct"></span></div>
             <div class="gauge-sub" id="gaugeSub"></div>
           </div>
           <div class="range" id="rangeBar"></div>
-          <div class="range-labels"><span id="rangeLow"></span><span id="rangeHigh"></span></div>
+          <div class="range-labels"><span id="rangeLow" class="editable" data-field="bench_low" data-kind="money" title="Kliknij, aby edytować" onclick="editField(this)"></span><span id="rangeMed" class="editable" data-field="bench_median" data-kind="money" title="Kliknij, aby edytować" onclick="editField(this)"></span><span id="rangeHigh" class="editable" data-field="bench_high" data-kind="money" title="Kliknij, aby edytować" onclick="editField(this)"></span></div>
           <div class="insight" id="rentInsight"></div>
         </div>
       </div>
@@ -563,10 +573,11 @@
       <div class="panel vchart">
         <div class="panel-h" style="margin:-24px -24px 18px;">Wartość lokalu — rynek wtórny, okolica</div>
         <div class="big">
-          <span class="num" id="valueEstDisplay"></span>
+          <span class="num editable" id="valueEstDisplay" data-field="value_estimate" data-kind="money" title="Kliknij, aby edytować" onclick="editField(this)"></span>
           <span class="delta" id="valuePM2Display"></span>
         </div>
         <div class="cap" id="valueCapDisplay"></div>
+        <div class="cap">Powierzchnia: <span id="areaDisplay" class="editable" data-field="area_m2" data-kind="num" title="Kliknij, aby edytować" onclick="editField(this)"></span> m²</div>
         <svg class="spark" id="valueSpark" viewBox="0 0 400 156" preserveAspectRatio="none"></svg>
       </div>
       <div class="panel yield" id="yieldBox">
@@ -701,16 +712,91 @@
     inp.classList.add('open');
     if(inp.showPicker){ try{ inp.showPicker(); }catch(e){ inp.focus(); } } else { inp.focus(); }
   }
+  /* wspólny zapis całego profilu do ld_property (upsert) — zwraca error|null */
+  async function saveProfile(){
+    try {
+      const { data:{ user } } = await sb.auth.getUser();
+      if(!user) return new Error('Brak zalogowanego użytkownika');
+      const { error } = await sb.from('ld_property').upsert({ user_id: user.id, data: profile, updated_at: new Date().toISOString() });
+      return error || null;
+    } catch(e){ return e; }
+  }
+  /* przerysuj wszystko, co zależy od profilu */
+  function renderProfileViews(){ renderMastMeta(); renderHealth(); renderDashboard(); renderAlerts(); }
+
   async function setTenantUntil(iso){
     const inp=document.getElementById('tenantUntilInput');
     if(inp) inp.classList.remove('open');
     if(!iso) return;
     profile = { ...profile, tenant_until: iso };
-    const uid = (await sb.auth.getUser()).data.user.id;
-    const { error } = await sb.from('ld_property').upsert({ user_id: uid, data: profile, updated_at: new Date().toISOString() });
+    const error = await saveProfile();
     if(error){ console.error(error); toast('Nie udało się zapisać daty'); return; }
     renderTenantUntil(); renderHealth(); renderAlerts();
     toast('Zapisano datę zakończenia najmu');
+  }
+
+  /* ---------- generyczna edycja inline pól profilu ---------- */
+  /* el ma data-field oraz data-kind: money | pct | num | text | date */
+  function editField(el){
+    if(!el || el.dataset.editing==='1') return;
+    const field = el.dataset.field, kind = el.dataset.kind || 'text';
+    const raw = profile[field];
+    el.dataset.editing = '1';
+    const input = document.createElement('input');
+    input.className = 'inline-input';
+    if(kind==='date'){
+      input.type = 'date';
+      input.value = (typeof raw === 'string') ? raw : '';
+      input.style.width = '150px';
+    } else if(kind==='text'){
+      input.type = 'text';
+      input.value = (raw==null) ? '' : String(raw);
+      input.style.width = '240px';
+    } else {
+      input.type = 'text';
+      input.inputMode = 'decimal';
+      input.value = (typeof raw === 'number') ? String(raw).replace('.',',') : '';
+      input.style.width = (kind==='money') ? '110px' : '80px';
+    }
+    let closed = false;
+    const finish = (commit)=>{
+      if(closed) return; closed = true;
+      el.dataset.editing = '';
+      if(commit){
+        let val;
+        if(kind==='date' || kind==='text'){
+          val = input.value.trim();
+          if(val==='') val = undefined;
+        } else {
+          val = parseFloat(input.value.replace(/\s/g,'').replace(',','.'));
+          if(!isFinite(val)) val = undefined;
+        }
+        if(val!==undefined) { commitField(field, val); return; }
+      }
+      renderProfileViews(); // odtwarza tekst elementu
+    };
+    if(kind==='date'){
+      input.addEventListener('change', ()=>finish(true));
+      input.addEventListener('blur', ()=>finish(false));
+      input.addEventListener('keydown', e=>{ if(e.key==='Escape'){ e.preventDefault(); finish(false); } });
+    } else {
+      input.addEventListener('blur', ()=>finish(true));
+      input.addEventListener('keydown', e=>{
+        if(e.key==='Enter'){ e.preventDefault(); finish(true); }
+        else if(e.key==='Escape'){ e.preventDefault(); finish(false); }
+      });
+    }
+    el.replaceChildren(input);
+    input.focus();
+    if(kind==='date' && input.showPicker){ try{ input.showPicker(); }catch(e){} }
+    else if(kind!=='date'){ input.select(); }
+  }
+  async function commitField(field, val){
+    profile = { ...profile, [field]: val };
+    renderProfileViews(); // natychmiastowe przeliczenie z nowej wartości
+    const error = await saveProfile();
+    if(error){ console.error(error); toast('Nie udało się zapisać'); return; }
+    toast('Zapisano');
   }
 
   /* ---------- backend (Supabase: Auth + Postgres + RLS) ---------- */
@@ -775,6 +861,24 @@
   const rowToTask  = r => ({ id:r.id, title:r.title, desc:r.descr||'', cat:r.cat, date:r.date, done:r.done, freqN:r.freq_n, freqUnit:r.freq_unit, log:r.log||[], attachments:r.attachments||[] });
   const rowToIssue = r => ({ id:r.id, title:r.title, desc:r.descr||'', pri:r.pri, status:r.status, created:r.created, log:r.log||[], attachments:r.attachments||[] });
 
+  /* domyślne wartości profilu — pokazywane gdy ld_property puste; pierwsza edycja je utrwala */
+  const PROFILE_DEFAULTS = {
+    rent: 2000,
+    tax_rate: 8.5,
+    media_coop: 500,
+    media_gas: 50,
+    media_electric: 100,
+    value_estimate: 620000,
+    area_m2: 27,
+    bench_low: 1800,
+    bench_median: 3300,
+    bench_high: 3600,
+    market_rent_target: 3100,
+    address_label: 'al. Jana Pawła II',
+    location_note: '27 m² · 4. piętro · Rondo ONZ, Śródmieście Północne · naprzeciw Atrium Plaza',
+    as_of_date: '2026-06-12',
+    tenant_until: '2026-10-31',
+  };
   let profile = {};
   async function fetchProperty() {
     const { data, error } = await sb.from('ld_property').select('data').maybeSingle();
@@ -858,9 +962,10 @@
 
   /* ---------- mast-meta from profile ---------- */
   function renderMastMeta(){
-    const net = Pn('net'), rent = Pn('rent'), taxRate = Pn('tax_rate');
+    const rent = Pn('rent'), taxRate = Pn('tax_rate');
+    const net = rent - Math.round(rent * taxRate / 100);
     document.getElementById('mastSub').textContent = P('location_note');
-    document.getElementById('mastTitle').innerHTML = 'Kawalerka<span class="dot">/</span>'+P('address_label');
+    document.getElementById('mastAddr').textContent = P('address_label');
     const asOf = document.getElementById('mastAsOf');
     if(asOf){ const ao=P('as_of_date',''); asOf.textContent = ao ? 'Stan na '+fmtDot(ao) : 'Stan na —'; }
     document.getElementById('rentCzynsz').textContent = rent.toLocaleString('pl-PL');
@@ -875,8 +980,9 @@
     const soon = tasks.filter(t=>!t.done && daysBetween(TODAY,t.date)>=0 && daysBetween(TODAY,t.date)<=45).length;
     const tenantUntilISO = getTenantUntil();
     const daysToEnd = daysBetween(TODAY, tenantUntilISO);
-    const net = Pn('net');
     const rent = Pn('rent');
+    const taxRate = Pn('tax_rate');
+    const net = rent - Math.round(rent * taxRate / 100);
     const median = Pn('bench_median');
     const potential = median > rent ? '+'+Math.round(median - rent).toLocaleString('pl-PL') : '—';
     const items = [
@@ -897,11 +1003,13 @@
   /* ---------- dashboard ---------- */
   function renderDashboard() {
     const rent = Pn('rent');
-    const net  = Pn('net');
     const taxRate = Pn('tax_rate');
     const taxAmt = Math.round(rent * taxRate / 100);
+    const net  = rent - taxAmt;
     const valueEst = Pn('value_estimate');
-    const valuePM2 = Pn('value_per_m2');
+    const areaM2 = Pn('area_m2');
+    const valuePM2 = areaM2 > 0 ? Math.round(valueEst / areaM2) : 0;
+    const marketTarget = Pn('market_rent_target');
     const mediaCoop = Pn('media_coop');
     const mediaGas  = Pn('media_gas');
     const mediaElec = Pn('media_electric');
@@ -926,9 +1034,9 @@
     const wfTotal = totalRent;
     const wf = [
       { l:'Czynsz całkowity', amt:wfTotal, col:'var(--teal)', w:100 },
-      { l:'− Media (spółdz.)', amt:-mediaCoop, col:'var(--ink-faint)', w:Math.round(mediaCoop/wfTotal*100), neg:true },
-      { l:'− Gaz', amt:-mediaGas, col:'var(--ink-faint)', w:Math.round(mediaGas/wfTotal*100), neg:true },
-      { l:'− Prąd', amt:-mediaElec, col:'var(--ink-faint)', w:Math.round(mediaElec/wfTotal*100), neg:true },
+      { l:'− Media (spółdz.)', amt:-mediaCoop, col:'var(--ink-faint)', w:Math.round(mediaCoop/wfTotal*100), neg:true, field:'media_coop' },
+      { l:'− Gaz', amt:-mediaGas, col:'var(--ink-faint)', w:Math.round(mediaGas/wfTotal*100), neg:true, field:'media_gas' },
+      { l:'− Prąd', amt:-mediaElec, col:'var(--ink-faint)', w:Math.round(mediaElec/wfTotal*100), neg:true, field:'media_electric' },
       { l:'div' },
       { l:'Czynsz dla Ciebie', amt:rent, col:'var(--gold)', w:Math.round(rent/wfTotal*100) },
       { l:'− Ryczałt '+taxRate.toLocaleString('pl-PL',{minimumFractionDigits:0,maximumFractionDigits:2}).replace('.',',')+'%', amt:-taxAmt, col:'var(--clay)', w:Math.round(taxAmt/wfTotal*100), neg:true },
@@ -939,10 +1047,13 @@
       if(r.l==='div') return '<div class="wf-rule"></div>';
       const sign = r.neg?'−':'';
       const val = Math.abs(r.amt);
+      const amtHtml = r.field
+        ? `${sign}<span class="editable" data-field="${r.field}" data-kind="money" title="Kliknij, aby edytować" onclick="editField(this)">${val.toLocaleString('pl-PL')}</span>`
+        : `${sign}${val.toLocaleString('pl-PL')}`;
       return `<div class="wf-row ${r.big?'big':''} ${r.neg?'neg':''}">
       <div class="wf-k">${r.l}</div>
       <div class="wf-track"><div class="wf-fill" style="width:${r.w}%;background:${r.col}"></div></div>
-      <div class="wf-amt">${sign}${val.toLocaleString('pl-PL')}</div>
+      <div class="wf-amt">${amtHtml}</div>
     </div>`;
     }).join('');
 
@@ -954,6 +1065,7 @@
     const pos = high > low ? ((rent-low)/(high-low))*100 : 50;
     const medPos = high > low ? ((median-low)/(high-low))*100 : 50;
     document.getElementById('rangeLow').textContent = low.toLocaleString('pl-PL')+' zł';
+    document.getElementById('rangeMed').textContent = 'mediana '+median.toLocaleString('pl-PL');
     document.getElementById('rangeHigh').textContent = high.toLocaleString('pl-PL')+' zł';
     document.getElementById('rangeBar').innerHTML = `
     <div class="range-track"></div>
@@ -984,18 +1096,20 @@
     document.getElementById('valueEstDisplay').innerHTML = '~'+valueEst.toLocaleString('pl-PL')+' <span style="font-size:24px;color:var(--ink-faint)">zł</span>';
     document.getElementById('valuePM2Display').textContent = '≈ '+valuePM2.toLocaleString('pl-PL')+' zł/m²';
     document.getElementById('valueCapDisplay').textContent = 'Szacunek dla lokalu w lokalizacji '+P('address_label')+' (rynek wtórny, stan po remoncie)';
+    document.getElementById('areaDisplay').textContent = areaM2.toLocaleString('pl-PL');
 
     // yield
     const annualNet = net * 12;
     const netYield = valueEst > 0 ? annualNet / valueEst * 100 : 0;
-    const annualPotential = 3100 * 0.915 * 12;
+    const annualPotential = Math.round(marketTarget * (1 - taxRate/100) * 12);
+    const netYieldPotential = valueEst > 0 ? annualPotential / valueEst * 100 : 0;
     document.getElementById('yieldBox').innerHTML = `
     <div class="panel-h" style="margin:-24px -24px 4px;">Rentowność najmu</div>
     <div class="y-row"><span class="k">Roczny dochód netto (obecny)</span><span class="v">${annualNet.toLocaleString('pl-PL')} zł</span></div>
     <div class="y-row"><span class="k">Rentowność netto (obecna)</span><span class="v">${netYield.toFixed(1).replace('.',',')} %</span></div>
     <div class="hr"></div>
-    <div class="y-row hl"><span class="k">Potencjał przy ~3 100 zł</span><span class="v">${Math.round(annualPotential).toLocaleString('pl-PL')} zł/rok</span></div>
-    <div class="y-note">Podniesienie do rynkowego poziomu zwiększyłoby rentowność netto do <strong>~5,5%</strong> — wyraźnie powyżej obecnych ~${netYield.toFixed(1).replace('.',',')}%.</div>`;
+    <div class="y-row hl"><span class="k">Potencjał przy ~<span class="editable" data-field="market_rent_target" data-kind="money" title="Kliknij, aby edytować" onclick="editField(this)">${marketTarget.toLocaleString('pl-PL')}</span> zł</span><span class="v">${annualPotential.toLocaleString('pl-PL')} zł/rok</span></div>
+    <div class="y-note">Podniesienie do rynkowego poziomu zwiększyłoby rentowność netto do <strong>~${netYieldPotential.toFixed(1).replace('.',',')}%</strong> — wyraźnie powyżej obecnych ~${netYield.toFixed(1).replace('.',',')}%.</div>`;
 
     // footnote
     document.getElementById('dashboardFootnote').innerHTML = `<strong>Skąd te liczby:</strong> benchmark czynszu i wartości oparty na ofertach z okolicy (styczeń–kwiecień 2026): porównywalna kawalerka wyceniana na sprzedaż ~${valueEst.toLocaleString('pl-PL')} zł (≈${valuePM2.toLocaleString('pl-PL')} zł/m²); średni czynsz kawalerki w Śródmieściu ~3 300–3 500 zł, stawka ~32–35 zł/m². To orientacyjne dane rynkowe, nie wycena rzeczoznawcy — przed podniesieniem czynszu warto sprawdzić aktualne aktywne oferty na Otodom/OLX.`;
@@ -1311,7 +1425,7 @@
 
   /* ---------- auth + init ---------- */
   async function loadAndRender(){
-    profile = await fetchProperty();
+    profile = { ...PROFILE_DEFAULTS, ...(await fetchProperty()) };
     renderTenantUntil();
     await seedIfEmpty();
     tasks  = await fetchTasks();
