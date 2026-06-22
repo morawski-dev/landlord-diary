@@ -336,6 +336,11 @@
       background: none; border: none; padding: 3px 4px; margin-left: auto; cursor: pointer; transition: color .14s;
     }
     .task-edit:hover { color: var(--gold); }
+    .task-del {
+      font-family: var(--mono); font-size: 10.5px; letter-spacing: .03em; color: var(--ink-faint);
+      background: none; border: none; padding: 3px 4px; cursor: pointer; transition: color .14s;
+    }
+    .task-del:hover { color: #c0564a; }
 
     .pill { font-family: var(--mono); font-size: 10.5px; letter-spacing: .03em; padding: 3px 9px; border-radius: 2px; font-weight: 500; white-space: nowrap; }
     .pill.cat,
@@ -1173,7 +1178,7 @@
         <div class="task-desc">${t.desc}</div>
         ${historyLine(t)}
         ${attachRowHtml(t.attachments)}
-        <div class="task-meta"><span class="pill cat ${t.cat}">${CAT_LABEL[t.cat]}</span>${recurPill}${datePill}<button class="task-edit" onclick="event.stopPropagation(); openTaskModal(${t.id})">edytuj</button></div>
+        <div class="task-meta"><span class="pill cat ${t.cat}">${CAT_LABEL[t.cat]}</span>${recurPill}${datePill}<button class="task-edit" onclick="event.stopPropagation(); openTaskModal(${t.id})">edytuj</button><button class="task-del" onclick="event.stopPropagation(); deleteTask(${t.id})">usuń</button></div>
       </div>
       <div class="task-date">${fmtPL(t.date)}</div>
     </div>`;
@@ -1202,6 +1207,16 @@
     t.done=next;
     renderTasks(); renderHealth(); renderTabs(); renderAlerts();
     if(t.done) toast('Odhaczone — zadanie wykonane');
+  }
+  async function deleteTask(id){
+    const t=tasks.find(x=>x.id===id); if(!t)return;
+    if(!confirm(`Usunąć zadanie „${t.title}”? Tej operacji nie można cofnąć.`)) return;
+    const { error } = await sb.from('ld_tasks').delete().eq('id', id);
+    if(error){ console.error(error); toast('Nie udało się usunąć zadania'); return; }
+    await removeStored((t.attachments||[]).map(a=>a.path));
+    tasks = tasks.filter(x=>x.id!==id);
+    renderTasks(); renderHealth(); renderTabs(); renderAlerts();
+    toast('Zadanie usunięte');
   }
   let taskModalEditId=null;
   const freqToValue=(n,unit)=> !unit ? 'none' : `${n||1}${unit==='month'?'m':'y'}`;
