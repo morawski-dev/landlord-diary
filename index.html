@@ -413,6 +413,20 @@
     .field { margin-bottom: 15px; }
     .field label { font-family: var(--mono); font-size: 11px; letter-spacing: .05em; text-transform: uppercase; color: var(--ink-faint); display: block; margin-bottom: 7px; }
     .modal-foot { display: flex; gap: 10px; justify-content: flex-end; margin-top: 24px; }
+    .file-input { font-family: var(--mono); font-size: 11.5px; color: var(--ink-faint); width: 100%; }
+    .file-input::file-selector-button { font-family: var(--mono); font-size: 11px; letter-spacing: .04em; text-transform: uppercase; color: var(--ink); background: var(--line-2); border: 1px solid var(--line-2); border-radius: 3px; padding: 6px 12px; margin-right: 10px; cursor: pointer; }
+    .file-input::file-selector-button:hover { background: var(--line); }
+    .attach-list { display: flex; flex-direction: column; gap: 6px; margin-bottom: 9px; }
+    .attach-list:empty { display: none; }
+    .attach-chip { display: flex; align-items: center; gap: 8px; background: var(--line-2); border: 1px solid var(--line); border-radius: 4px; padding: 6px 9px; font-size: 12.5px; }
+    .attach-chip .ac-name { flex: 1; color: var(--ink); cursor: pointer; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .attach-chip .ac-name:hover { color: var(--gold); text-decoration: underline; }
+    .attach-chip .ac-size { font-family: var(--mono); font-size: 10.5px; color: var(--ink-faint); }
+    .attach-chip .ac-del { background: none; border: none; color: var(--ink-faint); cursor: pointer; font-size: 16px; line-height: 1; padding: 0 2px; }
+    .attach-chip .ac-del:hover { color: var(--clay, #c25b4a); }
+    .attach-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+    .attach-tag { display: inline-flex; align-items: center; gap: 5px; background: var(--line-2); border: 1px solid var(--line); border-radius: 999px; padding: 3px 11px; font-size: 11.5px; color: var(--ink); cursor: pointer; }
+    .attach-tag:hover { border-color: var(--gold); color: var(--gold); }
 
     .toast {
       position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(90px);
@@ -618,6 +632,10 @@
       <select id="tm-freq"><option value="none">Jednorazowo</option><option value="1m">Co miesiąc</option><option value="1y">Co rok</option><option value="5y">Co 5 lat</option></select>
     </div>
     <div class="field"><label>Termin</label><input type="date" id="tm-date"></div>
+    <div class="field"><label>Załączniki (PDF, JPG, PNG · max 10 MB)</label>
+      <div id="tm-attach-list" class="attach-list"></div>
+      <input type="file" id="tm-files" class="file-input" multiple accept="application/pdf,image/jpeg,image/png">
+    </div>
     <div class="modal-foot">
       <button class="btn" onclick="closeModal('taskModal')">Anuluj</button>
       <button class="btn primary" id="tm-submit" onclick="saveTask()">Dodaj</button>
@@ -634,6 +652,10 @@
     <div class="field"><label>Szczegóły od najemcy</label><textarea id="im-desc" rows="3" placeholder="Co zgłosił najemca, od kiedy, jak objawia się usterka"></textarea></div>
     <div class="field"><label>Priorytet</label>
       <select id="im-pri"><option value="low">Niski — może poczekać</option><option value="med" selected>Średni — w tym tygodniu</option><option value="high">Wysoki — pilne</option></select>
+    </div>
+    <div class="field"><label>Załączniki (PDF, JPG, PNG · max 10 MB)</label>
+      <div id="im-attach-list" class="attach-list"></div>
+      <input type="file" id="im-files" class="file-input" multiple accept="application/pdf,image/jpeg,image/png">
     </div>
     <div class="modal-foot">
       <button class="btn" onclick="closeModal('issueModal')">Anuluj</button>
@@ -698,9 +720,60 @@
           ? window.supabase.createClient(SUPA_URL, SUPA_KEY)
           : null;
 
+  /* ---------- attachments (Supabase Storage: prywatny bucket + signed URLs) ---------- */
+  const BUCKET = 'ld-attachments';
+  const MAX_BYTES = 10 * 1024 * 1024;
+  const ALLOWED = ['application/pdf','image/jpeg','image/png'];
+  /* ASCII-safe klucz obiektu: usuń diakrytyki, spacje/znaki -> "-", tylko bezpieczne znaki */
+  function safeKey(name){
+    const norm = (name||'').normalize('NFKD').replace(/[̀-ͯ]/g,'');
+    return norm.replace(/[^a-zA-Z0-9._-]+/g,'-').replace(/^-+|-+$/g,'').toLowerCase() || 'plik';
+  }
+  function fmtSize(b){ return b>=1048576 ? (b/1048576).toFixed(1)+' MB' : Math.max(1,Math.round(b/1024))+' kB'; }
+  /* upload listy plików -> tablica metadanych { path, name, size, type } (waliduje typ i rozmiar) */
+  async function uploadFiles(fileList){
+    const out=[];
+    for(const f of (fileList||[])){
+      if(!ALLOWED.includes(f.type)){ toast(`Niedozwolony typ: ${f.name}`); continue; }
+      if(f.size > MAX_BYTES){ toast(`Za duży plik (max 10 MB): ${f.name}`); continue; }
+      const path = `${crypto.randomUUID()}/${safeKey(f.name)}`;
+      const { error } = await sb.storage.from(BUCKET).upload(path, f, { contentType:f.type });
+      if(error){ console.error(error); toast(`Nie udało się wgrać: ${f.name}`); continue; }
+      out.push({ path, name:f.name, size:f.size, type:f.type });
+    }
+    return out;
+  }
+  /* otwórz załącznik przez czasowy podpisany link (bucket jest prywatny) */
+  async function openAttachment(path){
+    const { data, error } = await sb.storage.from(BUCKET).createSignedUrl(path, 60);
+    if(error){ console.error(error); toast('Nie udało się otworzyć pliku'); return; }
+    window.open(data.signedUrl, '_blank');
+  }
+  async function removeStored(paths){ if(paths && paths.length) await sb.storage.from(BUCKET).remove(paths); }
+  const esc = s => String(s==null?'':s).replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+  /* in-modal editor (lista istniejących + zaznaczanie do usunięcia) i pasek na kartach */
+  let taskAttachments=[], taskAttachRemove=[];
+  let issueAttachments=[], issueAttachRemove=[];
+  function attachEditorHtml(items, kind){
+    return (items||[]).map((a,i)=>`<div class="attach-chip">
+      <span class="ac-name" onclick="openAttachment('${a.path}')" title="${esc(a.name)}">${esc(a.name)}</span>
+      <span class="ac-size">${fmtSize(a.size)}</span>
+      <button class="ac-del" title="Usuń" onclick="${kind}RemoveAttach(${i})">×</button>
+    </div>`).join('');
+  }
+  function renderTaskAttachEditor(){ document.getElementById('tm-attach-list').innerHTML = attachEditorHtml(taskAttachments,'tm'); }
+  function renderIssueAttachEditor(){ document.getElementById('im-attach-list').innerHTML = attachEditorHtml(issueAttachments,'im'); }
+  function tmRemoveAttach(i){ const a=taskAttachments.splice(i,1)[0]; if(a) taskAttachRemove.push(a.path); renderTaskAttachEditor(); }
+  function imRemoveAttach(i){ const a=issueAttachments.splice(i,1)[0]; if(a) issueAttachRemove.push(a.path); renderIssueAttachEditor(); }
+  function attachRowHtml(items){
+    if(!items || !items.length) return '';
+    return `<div class="attach-row">${items.map(a=>`<span class="attach-tag" onclick="event.stopPropagation(); openAttachment('${a.path}')" title="${esc(a.name)}">📎 ${esc(a.name)}</span>`).join('')}</div>`;
+  }
+
   /* row <-> app-object mapping (DB column `descr` <-> app field `desc`) */
-  const rowToTask  = r => ({ id:r.id, title:r.title, desc:r.descr||'', cat:r.cat, date:r.date, done:r.done, freqN:r.freq_n, freqUnit:r.freq_unit, log:r.log||[] });
-  const rowToIssue = r => ({ id:r.id, title:r.title, desc:r.descr||'', pri:r.pri, status:r.status, created:r.created, log:r.log||[] });
+  const rowToTask  = r => ({ id:r.id, title:r.title, desc:r.descr||'', cat:r.cat, date:r.date, done:r.done, freqN:r.freq_n, freqUnit:r.freq_unit, log:r.log||[], attachments:r.attachments||[] });
+  const rowToIssue = r => ({ id:r.id, title:r.title, desc:r.descr||'', pri:r.pri, status:r.status, created:r.created, log:r.log||[], attachments:r.attachments||[] });
 
   let profile = {};
   async function fetchProperty() {
@@ -985,6 +1058,7 @@
         <div class="task-title">${t.title}</div>
         <div class="task-desc">${t.desc}</div>
         ${historyLine(t)}
+        ${attachRowHtml(t.attachments)}
         <div class="task-meta"><span class="pill cat ${t.cat}">${CAT_LABEL[t.cat]}</span>${recurPill}${datePill}<button class="task-edit" onclick="event.stopPropagation(); openTaskModal(${t.id})">edytuj</button></div>
       </div>
       <div class="task-date">${fmtPL(t.date)}</div>
@@ -1031,18 +1105,25 @@
     document.getElementById('tm-date').value  = t ? t.date  : new Date().toLocaleDateString('en-CA');
     document.getElementById('tm-eyebrow').textContent = t ? 'Edycja zadania' : 'Nowy wpis';
     document.getElementById('tm-submit').textContent  = t ? 'Zapisz' : 'Dodaj';
+    taskAttachments = t ? [...(t.attachments||[])] : [];
+    taskAttachRemove = [];
+    document.getElementById('tm-files').value = '';
+    renderTaskAttachEditor();
     document.getElementById('taskModal').classList.add('open');
   }
   async function saveTask(){
     const title=document.getElementById('tm-title').value.trim();
     if(!title){toast('Podaj nazwę zadania');return;}
     const freq=parseFreq(document.getElementById('tm-freq').value);
+    const uploaded=await uploadFiles(document.getElementById('tm-files').files);
+    const attachments=[...taskAttachments, ...uploaded];
     const fields={ title, descr:document.getElementById('tm-desc').value.trim(),
       cat:document.getElementById('tm-cat').value, date:document.getElementById('tm-date').value||'2026-12-01',
-      freq_n:freq.freq_n, freq_unit:freq.freq_unit };
+      freq_n:freq.freq_n, freq_unit:freq.freq_unit, attachments };
     if(taskModalEditId!=null){
       const { data, error } = await sb.from('ld_tasks').update(fields).eq('id', taskModalEditId).select().single();
       if(error){ console.error(error); toast('Nie udało się zapisać zmiany'); return; }
+      await removeStored(taskAttachRemove);
       const i=tasks.findIndex(x=>x.id===taskModalEditId);
       if(i>-1) tasks[i]=rowToTask(data);
       closeModal('taskModal');
@@ -1085,6 +1166,7 @@
         <span class="pill ${PRI[i.pri][1]}">${PRI[i.pri][0]}</span>
       </div>
       <div class="issue-desc">${i.desc}</div>
+      ${attachRowHtml(i.attachments)}
       <div class="status-track">${steps}</div>
       <div class="log">${logHtml}</div>
       <div class="issue-foot">
@@ -1133,16 +1215,23 @@
     document.getElementById('im-pri').value   = it ? it.pri   : 'med';
     document.getElementById('im-eyebrow').textContent = it ? 'Edycja zgłoszenia' : 'Rejestracja usterki';
     document.getElementById('im-submit').textContent  = it ? 'Zapisz' : 'Zarejestruj';
+    issueAttachments = it ? [...(it.attachments||[])] : [];
+    issueAttachRemove = [];
+    document.getElementById('im-files').value = '';
+    renderIssueAttachEditor();
     document.getElementById('issueModal').classList.add('open');
   }
   async function saveIssue(){
     const title=document.getElementById('im-title').value.trim();
     if(!title){toast('Podaj czego dotyczy zgłoszenie');return;}
+    const uploaded=await uploadFiles(document.getElementById('im-files').files);
+    const attachments=[...issueAttachments, ...uploaded];
     const fields={ title, descr:document.getElementById('im-desc').value.trim()||'(brak szczegółów)',
-      pri:document.getElementById('im-pri').value };
+      pri:document.getElementById('im-pri').value, attachments };
     if(issueModalEditId!=null){
       const { data, error } = await sb.from('ld_issues').update(fields).eq('id', issueModalEditId).select().single();
       if(error){ console.error(error); toast('Nie udało się zapisać zmiany'); return; }
+      await removeStored(issueAttachRemove);
       const i=issues.findIndex(x=>x.id===issueModalEditId);
       if(i>-1) issues[i]=rowToIssue(data);
       closeModal('issueModal');
