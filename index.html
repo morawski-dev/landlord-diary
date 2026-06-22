@@ -684,7 +684,8 @@
     if(inp) inp.classList.remove('open');
     if(!iso) return;
     profile = { ...profile, tenant_until: iso };
-    const { error } = await sb.from('ld_property').update({ data: profile, updated_at: new Date().toISOString() }).eq('user_id', (await sb.auth.getUser()).data.user.id);
+    const uid = (await sb.auth.getUser()).data.user.id;
+    const { error } = await sb.from('ld_property').upsert({ user_id: uid, data: profile, updated_at: new Date().toISOString() });
     if(error){ console.error(error); toast('Nie udało się zapisać daty'); return; }
     renderTenantUntil(); renderHealth(); renderAlerts();
     toast('Zapisano datę zakończenia najmu');
