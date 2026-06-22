@@ -788,7 +788,7 @@
     document.getElementById('mastSub').textContent = P('location_note');
     document.getElementById('mastTitle').innerHTML = 'Kawalerka<span class="dot">/</span>'+P('address_label');
     const asOf = document.getElementById('mastAsOf');
-    if(asOf) asOf.textContent = 'Stan na '+fmtDot(P('as_of_date','—'));
+    if(asOf){ const ao=P('as_of_date',''); asOf.textContent = ao ? 'Stan na '+fmtDot(ao) : 'Stan na —'; }
     document.getElementById('rentCzynsz').textContent = rent.toLocaleString('pl-PL');
     document.getElementById('rentRyczalt').textContent = taxRate.toLocaleString('pl-PL',{minimumFractionDigits:0,maximumFractionDigits:2}).replace('.',',')+' %';
     document.getElementById('rentNet').textContent = net.toLocaleString('pl-PL')+' zł/mc';
