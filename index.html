@@ -491,18 +491,18 @@
   <div class="wrap">
     <div class="mast-top">
       <div class="folio">Dziennik Wynajmującego &nbsp;·&nbsp; <b>№ 01</b></div>
-      <div class="mast-top-right"><span>Stan na 12.06.2026</span><button class="signout" onclick="signOut()">Wyloguj</button></div>
+      <div class="mast-top-right"><span id="mastAsOf"></span><button class="signout" onclick="signOut()">Wyloguj</button></div>
     </div>
     <div class="mast-main">
       <div class="mast-title">
-        <h1>Kawalerka<span class="dot">/</span>al. Jana&nbsp;Pawła&nbsp;II</h1>
-        <p class="mast-sub">27 m² · 4. piętro · Rondo ONZ, Śródmieście Północne · naprzeciw Atrium Plaza</p>
+        <h1 id="mastTitle">Kawalerka<span class="dot">/</span></h1>
+        <p class="mast-sub" id="mastSub"></p>
       </div>
       <div class="mast-meta">
-        <div class="mm-row"><span>Najemca do</span><b class="accent mm-date-edit" id="tenantUntilVal" title="Kliknij, aby zmienić datę" onclick="editTenantUntil()">31.10.2026</b><input type="date" id="tenantUntilInput" class="mm-date-input" onchange="setTenantUntil(this.value)" onblur="this.classList.remove('open')"></div>
-        <div class="mm-row"><span>Czynsz najmu</span><b>2 000 zł <span style="color:var(--ink-faint)">+ media</span></b></div>
-        <div class="mm-row"><span>Ryczałt</span><b>8,5%</b></div>
-        <div class="mm-row"><span>Na rękę</span><b class="accent">1 830 zł/mc</b></div>
+        <div class="mm-row"><span>Najemca do</span><b class="accent mm-date-edit" id="tenantUntilVal" title="Kliknij, aby zmienić datę" onclick="editTenantUntil()"></b><input type="date" id="tenantUntilInput" class="mm-date-input" onchange="setTenantUntil(this.value)" onblur="this.classList.remove('open')"></div>
+        <div class="mm-row"><span>Czynsz najmu</span><b><span id="rentCzynsz"></span> zł <span style="color:var(--ink-faint)">+ media</span></b></div>
+        <div class="mm-row"><span>Ryczałt</span><b><span id="rentRyczalt"></span></b></div>
+        <div class="mm-row"><span>Na rękę</span><b class="accent"><span id="rentNet"></span></b></div>
       </div>
     </div>
     <div class="health-strip" id="healthStrip"></div>
@@ -535,11 +535,11 @@
         <div class="panel-h">Czynsz vs. okolica</div>
         <div class="bench">
           <div class="gauge">
-            <div class="gauge-v">2&nbsp;000<span class="unit"> zł</span> <span class="pct" id="gapPct"></span></div>
+            <div class="gauge-v"><span id="gaugeRent"></span><span class="unit"> zł</span> <span class="pct" id="gapPct"></span></div>
             <div class="gauge-sub" id="gaugeSub"></div>
           </div>
           <div class="range" id="rangeBar"></div>
-          <div class="range-labels"><span>1 800 zł</span><span>3 600 zł</span></div>
+          <div class="range-labels"><span id="rangeLow"></span><span id="rangeHigh"></span></div>
           <div class="insight" id="rentInsight"></div>
         </div>
       </div>
@@ -549,10 +549,10 @@
       <div class="panel vchart">
         <div class="panel-h" style="margin:-24px -24px 18px;">Wartość lokalu — rynek wtórny, okolica</div>
         <div class="big">
-          <span class="num">~620 000 <span style="font-size:24px;color:var(--ink-faint)">zł</span></span>
-          <span class="delta">≈ 22 100 zł/m²</span>
+          <span class="num" id="valueEstDisplay"></span>
+          <span class="delta" id="valuePM2Display"></span>
         </div>
-        <div class="cap">Szacunek dla 27–28 m² przy Rondzie ONZ (rynek wtórny, stan po remoncie)</div>
+        <div class="cap" id="valueCapDisplay"></div>
         <svg class="spark" id="valueSpark" viewBox="0 0 400 156" preserveAspectRatio="none"></svg>
       </div>
       <div class="panel yield" id="yieldBox">
@@ -560,9 +560,7 @@
       </div>
     </div>
 
-    <div class="footnote reveal">
-      <strong>Skąd te liczby:</strong> benchmark czynszu i wartości oparty na ofertach z okolicy Ronda ONZ / Śródmieścia Północnego (styczeń–kwiecień 2026): porównywalna kawalerka 28 m² na al. Jana Pawła II wyceniana na sprzedaż ~620 000 zł (≈22 100 zł/m²); średni czynsz kawalerki w Śródmieściu ~3 300–3 500 zł, stawka ~32–35 zł/m². To orientacyjne dane rynkowe, nie wycena rzeczoznawcy — przed podniesieniem czynszu warto sprawdzić aktualne aktywne oferty na Otodom/OLX.
-    </div>
+    <div class="footnote reveal" id="dashboardFootnote"></div>
   </section>
 
   <!-- KALENDARZ -->
@@ -784,18 +782,35 @@
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
+  /* ---------- mast-meta from profile ---------- */
+  function renderMastMeta(){
+    const net = Pn('net'), rent = Pn('rent'), taxRate = Pn('tax_rate');
+    document.getElementById('mastSub').textContent = P('location_note');
+    document.getElementById('mastTitle').innerHTML = 'Kawalerka<span class="dot">/</span>'+P('address_label');
+    const asOf = document.getElementById('mastAsOf');
+    if(asOf) asOf.textContent = 'Stan na '+fmtDot(P('as_of_date','—'));
+    document.getElementById('rentCzynsz').textContent = rent.toLocaleString('pl-PL');
+    document.getElementById('rentRyczalt').textContent = taxRate.toLocaleString('pl-PL',{minimumFractionDigits:0,maximumFractionDigits:2}).replace('.',',')+' %';
+    document.getElementById('rentNet').textContent = net.toLocaleString('pl-PL')+' zł/mc';
+  }
+
   /* ---------- health strip ---------- */
   function renderHealth() {
     const open = issues.filter(i=>i.status<3).length;
     const overdue = tasks.filter(t=>!t.done && daysBetween(TODAY,t.date)<0).length;
     const soon = tasks.filter(t=>!t.done && daysBetween(TODAY,t.date)>=0 && daysBetween(TODAY,t.date)<=45).length;
-    const daysToEnd = daysBetween(TODAY,'2026-10-31');
+    const tenantUntilISO = getTenantUntil();
+    const daysToEnd = daysBetween(TODAY, tenantUntilISO);
+    const net = Pn('net');
+    const rent = Pn('rent');
+    const median = Pn('bench_median');
+    const potential = median > rent ? '+'+Math.round(median - rent).toLocaleString('pl-PL') : '—';
     const items = [
-      { l:'Na rękę / mies.', v:'1 830', s:'zł', t:'stabilnie', cls:'flat' },
-      { l:'Potencjał do rynku', v:'+1 350', s:'zł/mc', t:'czynsz poniżej okolicy', cls:'up' },
+      { l:'Na rękę / mies.', v:net.toLocaleString('pl-PL'), s:'zł', t:'stabilnie', cls:'flat' },
+      { l:'Potencjał do rynku', v:potential, s:'zł/mc', t:'czynsz poniżej okolicy', cls:'up' },
       { l:'Otwarte zgłoszenia', v:open, s:'', t:open?'wymaga działania':'wszystko zamknięte', cls:open?'down':'up' },
       { l:'Zadania pilne · 45 dni', v:soon+overdue, s:'', t:overdue?`${overdue} po terminie`:(soon?'na bieżąco':'czysto'), cls:overdue?'down':(soon?'flat':'up') },
-      { l:'Do końca umowy', v:daysToEnd, s:'dni', t:'31.10.2026', cls:'flat' },
+      { l:'Do końca umowy', v:daysToEnd, s:'dni', t:fmtDot(tenantUntilISO), cls:'flat' },
     ];
     document.getElementById('healthStrip').innerHTML = items.map(i=>`
     <div class="hs">
@@ -807,28 +822,44 @@
 
   /* ---------- dashboard ---------- */
   function renderDashboard() {
+    const rent = Pn('rent');
+    const net  = Pn('net');
+    const taxRate = Pn('tax_rate');
+    const taxAmt = Math.round(rent * taxRate / 100);
+    const valueEst = Pn('value_estimate');
+    const valuePM2 = Pn('value_per_m2');
+    const mediaCoop = Pn('media_coop');
+    const mediaGas  = Pn('media_gas');
+    const mediaElec = Pn('media_electric');
+    const median = Pn('bench_median');
+    const low    = Pn('bench_low');
+    const high   = Pn('bench_high');
+    const totalRent = rent + mediaCoop + mediaGas + mediaElec;
+
     // KPIs
+    const grossYield = valueEst > 0 ? (rent * 12 / valueEst * 100) : 0;
     const kpis = [
-      { lbl:'Czynsz najmu', num:'2 000', s:'zł/mc', foot:'bez mediów' },
-      { lbl:'Podatek ryczałt', num:'170', s:'zł/mc', foot:'8,5% od 2 000 zł' },
-      { lbl:'Rentowność brutto', num:'~4,3', s:'%', foot:'najem / wartość lokalu' },
-      { lbl:'Wartość lokalu', num:'~620', s:'tys. zł', foot:'≈22,1 tys. zł/m²' },
+      { lbl:'Czynsz najmu', num:rent.toLocaleString('pl-PL'), s:'zł/mc', foot:'bez mediów' },
+      { lbl:'Podatek ryczałt', num:taxAmt.toLocaleString('pl-PL'), s:'zł/mc', foot:taxRate.toLocaleString('pl-PL',{minimumFractionDigits:0,maximumFractionDigits:2}).replace('.',',')+'% od '+rent.toLocaleString('pl-PL')+' zł' },
+      { lbl:'Rentowność brutto', num:'~'+grossYield.toFixed(1).replace('.',','), s:'%', foot:'najem / wartość lokalu' },
+      { lbl:'Wartość lokalu', num:'~'+(valueEst/1000).toLocaleString('pl-PL',{minimumFractionDigits:0,maximumFractionDigits:0}), s:'tys. zł', foot:'≈'+(valuePM2/1000).toLocaleString('pl-PL',{minimumFractionDigits:1,maximumFractionDigits:1}).replace('.',',')+' tys. zł/m²' },
     ];
     document.getElementById('kpiRow').innerHTML = kpis.map(k=>`
     <div class="kpi"><div class="kpi-k">${k.lbl}</div>
     <div class="kpi-v">${k.num} <span>${k.s}</span></div><div class="kpi-f">${k.foot}</div></div>`).join('');
 
     // waterfall
+    const wfTotal = totalRent;
     const wf = [
-      { l:'Czynsz całkowity', amt:2650, col:'var(--teal)', w:100 },
-      { l:'− Media (spółdz.)', amt:-500, col:'var(--ink-faint)', w:19, neg:true },
-      { l:'− Gaz', amt:-50, col:'var(--ink-faint)', w:4, neg:true },
-      { l:'− Prąd', amt:-100, col:'var(--ink-faint)', w:6, neg:true },
+      { l:'Czynsz całkowity', amt:wfTotal, col:'var(--teal)', w:100 },
+      { l:'− Media (spółdz.)', amt:-mediaCoop, col:'var(--ink-faint)', w:Math.round(mediaCoop/wfTotal*100), neg:true },
+      { l:'− Gaz', amt:-mediaGas, col:'var(--ink-faint)', w:Math.round(mediaGas/wfTotal*100), neg:true },
+      { l:'− Prąd', amt:-mediaElec, col:'var(--ink-faint)', w:Math.round(mediaElec/wfTotal*100), neg:true },
       { l:'div' },
-      { l:'Czynsz dla Ciebie', amt:2000, col:'var(--gold)', w:75 },
-      { l:'− Ryczałt 8,5%', amt:-170, col:'var(--clay)', w:9, neg:true },
+      { l:'Czynsz dla Ciebie', amt:rent, col:'var(--gold)', w:Math.round(rent/wfTotal*100) },
+      { l:'− Ryczałt '+taxRate.toLocaleString('pl-PL',{minimumFractionDigits:0,maximumFractionDigits:2}).replace('.',',')+'%', amt:-taxAmt, col:'var(--clay)', w:Math.round(taxAmt/wfTotal*100), neg:true },
       { l:'div' },
-      { l:'Na rękę', amt:1830, col:'var(--sage)', w:69, big:true },
+      { l:'Na rękę', amt:net, col:'var(--sage)', w:Math.round(net/wfTotal*100), big:true },
     ];
     document.getElementById('waterfall').innerHTML = wf.map(r=>{
       if(r.l==='div') return '<div class="wf-rule"></div>';
@@ -842,45 +873,58 @@
     }).join('');
 
     // rent benchmark gauge
-    const myRent=2000, median=3350, low=1800, high=3600;
-    const gapPct = Math.round((myRent/median-1)*100);
+    const gapPct = median > 0 ? Math.round((rent/median-1)*100) : 0;
+    document.getElementById('gaugeRent').textContent = rent.toLocaleString('pl-PL');
     document.getElementById('gapPct').textContent = `(${gapPct}%)`;
-    document.getElementById('gaugeSub').textContent = `vs. mediana okolicy ~3 350 zł · ${Math.abs(gapPct)}% poniżej rynku`;
-    const pos = ((myRent-low)/(high-low))*100;
-    const medPos = ((median-low)/(high-low))*100;
+    document.getElementById('gaugeSub').textContent = `vs. mediana okolicy ~${median.toLocaleString('pl-PL')} zł · ${Math.abs(gapPct)}% poniżej rynku`;
+    const pos = high > low ? ((rent-low)/(high-low))*100 : 50;
+    const medPos = high > low ? ((median-low)/(high-low))*100 : 50;
+    document.getElementById('rangeLow').textContent = low.toLocaleString('pl-PL')+' zł';
+    document.getElementById('rangeHigh').textContent = high.toLocaleString('pl-PL')+' zł';
     document.getElementById('rangeBar').innerHTML = `
     <div class="range-track"></div>
-    <div class="tick" style="left:${medPos}%" data-label="mediana 3 350"></div>
-    <div class="tick you" style="left:${pos}%" data-label="Ty · 2 000"></div>`;
+    <div class="tick" style="left:${medPos}%" data-label="mediana ${median.toLocaleString('pl-PL')}"></div>
+    <div class="tick you" style="left:${pos}%" data-label="Ty · ${rent.toLocaleString('pl-PL')}"></div>`;
     document.getElementById('rentInsight').innerHTML = `Twój czynsz jest <strong>ok. ${Math.abs(gapPct)}% poniżej</strong> mediany okolicy. Przy odnowieniu umowy realny pułap to <strong>3 000–3 300 zł</strong> — to <strong>+1 000–1 300 zł/mc</strong> (po podatku ~+915–1 190 zł). Warto rozważyć stopniową podwyżkę, by nie stracić sprawdzonego najemcy.`;
 
     // value spark
-    const pts=[18800,19400,20100,20600,21200,21500,21900,22100];
-    const max=Math.max(...pts), min=Math.min(...pts), W=400, H=156, pad=8;
-    const xs=i=>pad+(i/(pts.length-1))*(W-pad*2);
-    const ys=v=>H-pad-((v-min)/(max-min))*(H-pad*2-16);
-    let path=pts.map((v,i)=>`${i===0?'M':'L'}${xs(i).toFixed(1)},${ys(v).toFixed(1)}`).join(' ');
-    let area=path+` L${xs(pts.length-1)},${H} L${xs(0)},${H} Z`;
-    document.getElementById('valueSpark').innerHTML = `
-    <defs><linearGradient id="vg" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="rgba(216,166,61,.30)"/><stop offset="100%" stop-color="rgba(216,166,61,0)"/>
-    </linearGradient></defs>
-    <path d="${area}" fill="url(#vg)"/>
-    <path d="${path}" fill="none" stroke="var(--gold)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-    ${pts.map((v,i)=>`<circle cx="${xs(i)}" cy="${ys(v)}" r="${i===pts.length-1?4:0}" fill="var(--gold)"/>`).join('')}
-    <text x="${xs(0)}" y="${H-3}" font-size="9" fill="var(--ink-faint)" font-family="JetBrains Mono">2023</text>
-    <text x="${xs(pts.length-1)}" y="${H-3}" font-size="9" fill="var(--ink-faint)" text-anchor="end" font-family="JetBrains Mono">2026</text>`;
+    const pts = profile.value_spark || [];
+    if(pts.length >= 2) {
+      const max=Math.max(...pts), min=Math.min(...pts), W=400, H=156, pad=8;
+      const xs=i=>pad+(i/(pts.length-1))*(W-pad*2);
+      const ys=v=>H-pad-((v-min)/(max-min))*(H-pad*2-16);
+      let path=pts.map((v,i)=>`${i===0?'M':'L'}${xs(i).toFixed(1)},${ys(v).toFixed(1)}`).join(' ');
+      let area=path+` L${xs(pts.length-1)},${H} L${xs(0)},${H} Z`;
+      document.getElementById('valueSpark').innerHTML = `
+      <defs><linearGradient id="vg" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="rgba(216,166,61,.30)"/><stop offset="100%" stop-color="rgba(216,166,61,0)"/>
+      </linearGradient></defs>
+      <path d="${area}" fill="url(#vg)"/>
+      <path d="${path}" fill="none" stroke="var(--gold)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+      ${pts.map((v,i)=>`<circle cx="${xs(i)}" cy="${ys(v)}" r="${i===pts.length-1?4:0}" fill="var(--gold)"/>`).join('')}
+      <text x="${xs(0)}" y="${H-3}" font-size="9" fill="var(--ink-faint)" font-family="JetBrains Mono">2023</text>
+      <text x="${xs(pts.length-1)}" y="${H-3}" font-size="9" fill="var(--ink-faint)" text-anchor="end" font-family="JetBrains Mono">2026</text>`;
+    }
+
+    // value display
+    document.getElementById('valueEstDisplay').innerHTML = '~'+valueEst.toLocaleString('pl-PL')+' <span style="font-size:24px;color:var(--ink-faint)">zł</span>';
+    document.getElementById('valuePM2Display').textContent = '≈ '+valuePM2.toLocaleString('pl-PL')+' zł/m²';
+    document.getElementById('valueCapDisplay').textContent = 'Szacunek dla lokalu w lokalizacji '+P('address_label')+' (rynek wtórny, stan po remoncie)';
 
     // yield
-    const annualNet = 1830*12;
-    const annualPotential = 3100*0.915*12;
+    const annualNet = net * 12;
+    const netYield = valueEst > 0 ? annualNet / valueEst * 100 : 0;
+    const annualPotential = 3100 * 0.915 * 12;
     document.getElementById('yieldBox').innerHTML = `
     <div class="panel-h" style="margin:-24px -24px 4px;">Rentowność najmu</div>
     <div class="y-row"><span class="k">Roczny dochód netto (obecny)</span><span class="v">${annualNet.toLocaleString('pl-PL')} zł</span></div>
-    <div class="y-row"><span class="k">Rentowność netto (obecna)</span><span class="v">${(annualNet/620000*100).toFixed(1)} %</span></div>
+    <div class="y-row"><span class="k">Rentowność netto (obecna)</span><span class="v">${netYield.toFixed(1).replace('.',',')} %</span></div>
     <div class="hr"></div>
     <div class="y-row hl"><span class="k">Potencjał przy ~3 100 zł</span><span class="v">${Math.round(annualPotential).toLocaleString('pl-PL')} zł/rok</span></div>
-    <div class="y-note">Podniesienie do rynkowego poziomu zwiększyłoby rentowność netto do <strong>~5,5%</strong> — wyraźnie powyżej obecnych ~3,5%.</div>`;
+    <div class="y-note">Podniesienie do rynkowego poziomu zwiększyłoby rentowność netto do <strong>~5,5%</strong> — wyraźnie powyżej obecnych ~${netYield.toFixed(1).replace('.',',')}%.</div>`;
+
+    // footnote
+    document.getElementById('dashboardFootnote').innerHTML = `<strong>Skąd te liczby:</strong> benchmark czynszu i wartości oparty na ofertach z okolicy (styczeń–kwiecień 2026): porównywalna kawalerka wyceniana na sprzedaż ~${valueEst.toLocaleString('pl-PL')} zł (≈${valuePM2.toLocaleString('pl-PL')} zł/m²); średni czynsz kawalerki w Śródmieściu ~3 300–3 500 zł, stawka ~32–35 zł/m². To orientacyjne dane rynkowe, nie wycena rzeczoznawcy — przed podniesieniem czynszu warto sprawdzić aktualne aktywne oferty na Otodom/OLX.`;
   }
 
   /* ---------- tasks ---------- */
@@ -1147,7 +1191,8 @@
     const tenantUntilISO=getTenantUntil();
     const dEnd=daysBetween(TODAY,tenantUntilISO);
     if(dEnd<=150) a.push({type:'info',icon:'§',title:`Umowa najmu kończy się ${fmtDot(tenantUntilISO)}`,sub:`Za ${dEnd} dni. Zacznij rozmowę o przedłużeniu/podwyżce z wyprzedzeniem.`,when:`${dEnd}d`,sort:30});
-    a.push({type:'info',icon:'↗',title:'Czynsz poniżej rynku okolicy',sub:'Twoje 2 000 zł vs. mediana ~3 350 zł. Potencjał +1 000–1 300 zł/mc przy odnowieniu.',when:'rynek',sort:20});
+    const rent=Pn('rent'), median=Pn('bench_median');
+    a.push({type:'info',icon:'↗',title:'Czynsz poniżej rynku okolicy',sub:'Twoje '+rent.toLocaleString('pl-PL')+' zł vs. mediana ~'+median.toLocaleString('pl-PL')+' zł. Potencjał +1 000–1 300 zł/mc przy odnowieniu.',when:'rynek',sort:20});
     return a.sort((x,y)=>y.sort-x.sort);
   }
   function renderAlerts(){
