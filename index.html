@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dziennik Wynajmującego — al. Jana Pawła II</title>
+  <title>Dziennik Wynajmującego</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Hanken+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
@@ -472,7 +472,7 @@
 <div class="auth-gate" id="authGate">
   <div class="auth-card">
     <div class="auth-folio">Dziennik Wynajmującego &nbsp;·&nbsp; <b>Dostęp prywatny</b></div>
-    <h2 class="auth-title">Kawalerka<span class="dot">/</span>al.&nbsp;Jana&nbsp;Pawła&nbsp;II</h2>
+    <h2 class="auth-title">Dziennik Wynajmującego</h2>
     <p class="auth-sub">Zaloguj się, aby zobaczyć i edytować dane najmu.</p>
     <label class="auth-l" for="au-email">E-mail</label>
     <input id="au-email" class="auth-in" type="email" autocomplete="username" placeholder="ty@przyklad.pl">
@@ -667,10 +667,9 @@
   /* DD.MM.YYYY from an ISO (YYYY-MM-DD) string, no timezone shift */
   const fmtDot = iso => { const [y,m,d]=iso.split('-'); return `${d}.${m}.${y}`; };
 
-  /* ---------- "Najemca do" (tenant-until) date — persisted in localStorage ---------- */
-  const TENANT_UNTIL_KEY = 'ld_tenant_until';
+  /* ---------- "Najemca do" (tenant-until) — w ld_property.data.tenant_until ---------- */
   const tenantUntilDefault = '2026-10-31';
-  function getTenantUntil(){ return localStorage.getItem(TENANT_UNTIL_KEY) || tenantUntilDefault; }
+  function getTenantUntil(){ return profile.tenant_until || tenantUntilDefault; }
   function renderTenantUntil(){
     const el=document.getElementById('tenantUntilVal');
     if(el) el.textContent=fmtDot(getTenantUntil());
@@ -682,13 +681,14 @@
     inp.classList.add('open');
     if(inp.showPicker){ try{ inp.showPicker(); }catch(e){ inp.focus(); } } else { inp.focus(); }
   }
-  function setTenantUntil(iso){
+  async function setTenantUntil(iso){
     const inp=document.getElementById('tenantUntilInput');
     if(inp) inp.classList.remove('open');
     if(!iso) return;
-    localStorage.setItem(TENANT_UNTIL_KEY, iso);
-    renderTenantUntil();
-    renderAlerts();
+    profile = { ...profile, tenant_until: iso };
+    const { error } = await sb.from('ld_property').update({ data: profile, updated_at: new Date().toISOString() }).eq('user_id', (await sb.auth.getUser()).data.user.id);
+    if(error){ console.error(error); toast('Nie udało się zapisać daty'); return; }
+    renderTenantUntil(); renderHealth(); renderAlerts();
     toast('Zapisano datę zakończenia najmu');
   }
 
@@ -702,6 +702,16 @@
   /* row <-> app-object mapping (DB column `descr` <-> app field `desc`) */
   const rowToTask  = r => ({ id:r.id, title:r.title, desc:r.descr||'', cat:r.cat, date:r.date, done:r.done, freqN:r.freq_n, freqUnit:r.freq_unit, log:r.log||[] });
   const rowToIssue = r => ({ id:r.id, title:r.title, desc:r.descr||'', pri:r.pri, status:r.status, created:r.created, log:r.log||[] });
+
+  let profile = {};
+  async function fetchProperty() {
+    const { data, error } = await sb.from('ld_property').select('data').maybeSingle();
+    if (error) { console.error(error); toast('Błąd wczytywania profilu'); return {}; }
+    return (data && data.data) || {};
+  }
+  /* bezpieczny odczyt liczby/tekstu z profilu z fallbackiem */
+  const P  = (k, d='—') => (profile[k] ?? d);
+  const Pn = (k, d=0)   => { const v = profile[k]; return (typeof v === 'number') ? v : d; };
 
   async function fetchTasks() {
     const { data, error } = await sb.from('ld_tasks').select('*').order('id');
@@ -1166,9 +1176,12 @@
 
   /* ---------- auth + init ---------- */
   async function loadAndRender(){
+    profile = await fetchProperty();
+    renderTenantUntil();
     await seedIfEmpty();
     tasks  = await fetchTasks();
     issues = await fetchIssues();
+    renderMastMeta();
     renderTabs(); renderHealth(); renderDashboard();
     renderTaskFilters(); renderTasks();
     renderIssueFilters(); renderIssues();
@@ -1195,7 +1208,6 @@
     location.reload();
   }
   (async function(){
-    renderTenantUntil();
     if(!sb){ document.getElementById('au-msg').textContent='Nie udało się załadować biblioteki Supabase (sprawdź połączenie).'; return; }
     const { data:{ session } } = await sb.auth.getSession();
     if(session) enterApp();
